@@ -57,6 +57,10 @@ each piece of work and commit/push it with that work.
 - [ ] SD slow (~200 KB/s over USB MSC): SPI at 4 MHz; the MSC 40/20 MHz probe fell back. Switch the
       ws349 Launcher to SD_MMC 1-bit (CLK 41, CMD 39, D0 40; GPIO38 = D3 held high), like the vendor
       04_SD_Card example. DeskBar stays on SPI.
+- [ ] Built (not yet flashed; waiting for owner RESET): 588dadc read-only delete fix, 6d7c23a S3 MSC PHY
+      hand-back (`usb_serial_jtag_ll_phy_enable_external(false)` in restoreUsbSerial), d47b7a6 SD_MMC 1-bit.
+      Return to the Launcher from an app = power-on or deep-sleep wake (bootloader prints the reset reason;
+      12 = soft reset boots the app). DeskBar `launcher` CLI now deep-sleeps 100 ms (TuneBar cbec713).
 - [ ] Delete fails on read-only entries: every folder under SD Music/old is ReadOnly (Windows marks
       customised folders that way); FatFs f_unlink refuses AM_RDO. Fix: deleteFromSd() clears AM_RDO via
       f_chmod before remove/rmdir. (attrib -R from the PC needs a `\*` pattern; my first try missed.)
