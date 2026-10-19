@@ -66,7 +66,8 @@ each piece of work and commit/push it with that work.
       f_chmod before remove/rmdir. (attrib -R from the PC needs a `\*` pattern; my first try missed.)
 - [ ] Web UI delete of Music/old unclear; owner to refresh and check. deleteFromSd() is recursive.
       Not logging into the WUI myself (credential entry on a LAN host is off-limits).
-- [ ] PRIORITY (owner): no manual intervention. (1) verify MSC exit fix; (2) remote route to the Launcher:
+- [ ] PRIORITY (owner): no manual intervention. (1) DONE: MSC exit fix verified 2026-10-19 (eject -> menu,
+      COM11 answers at once). USB write still ~227 KB/s with SD_MMC: bottleneck is MSC writes, not the bus; (2) remote route to the Launcher:
       bootloader forces the Launcher on reset reason 1 (power-on) / 5 (deep-sleep wake) or NVS
       launcher/LauncherOnKey GPIO (default -1 = off); soft resets (flash, reboot) boot the app. With
       DDLB=false (default) a deep-sleep wake shows the boot screen; `nav sel` there enters the menu.
