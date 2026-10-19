@@ -198,3 +198,11 @@ practical minimum for text.** This drives the scaling rules in
 - **Launcher CLI (our fork)**: `support_files/serial_cli.py COM11 <cmd>...`. Commands: `ping`, `status`,
   `bl <0-100>`, `tap [x y]`, `nav <next|prev|sel|esc>`, `screenshot -o file.png` (landscape PNG of the
   framebuffer). Native USB-CDC drops bytes if the TX buffer is full: loop on `Serial.write()` for bulk data.
+
+## Launcher boot rules (keyboot bootloader)
+- Forces the Launcher on reset reason 1 (power-on, incl. the RESET button) or 5 (deep-sleep wake),
+  or when NVS `launcher/LauncherOnKey` GPIO reads `LauncherKeyLvl` (default -1 = off; CFG menu).
+- Every soft reset (a flash, `reboot`, esptool's reset) boots the selected app.
+- Remote route: each ported app has a serial `launcher` command (100 ms deep sleep);
+  `python support_files/to_launcher.py COM11` sends it and catches the boot screen with `nav sel`.
+- A deep-sleep hand-over doesn't power-cycle the SD card: keep every firmware on the same SD mode (SPI).

@@ -66,17 +66,22 @@ each piece of work and commit/push it with that work.
       f_chmod before remove/rmdir. (attrib -R from the PC needs a `\*` pattern; my first try missed.)
 - [ ] Web UI delete of Music/old unclear; owner to refresh and check. deleteFromSd() is recursive.
       Not logging into the WUI myself (credential entry on a LAN host is off-limits).
-- [ ] PRIORITY (owner): no manual intervention. (1) DONE: MSC exit fix verified 2026-10-19 (eject -> menu,
+- [x] PRIORITY (owner): no manual intervention. DONE 2026-10-19, verified: flash -> to_launcher.py -> main menu with SD mounted. (1) DONE: MSC exit fix verified 2026-10-19 (eject -> menu,
       COM11 answers at once). USB write still ~227 KB/s with SD_MMC: bottleneck is MSC writes, not the bus; (2) remote route to the Launcher:
       bootloader forces the Launcher on reset reason 1 (power-on) / 5 (deep-sleep wake) or NVS
       launcher/LauncherOnKey GPIO (default -1 = off); soft resets (flash, reboot) boot the app. With
       DDLB=false (default) a deep-sleep wake shows the boot screen; `nav sel` there enters the menu.
       Plan: every ported app gets CLI `launcher` (100 ms deep sleep); host `support_files/to_launcher.py`.
-- [ ] to_launcher.py: app hand-over works (DeskBar `launcher` -> deep sleep -> Launcher boot screen), but
+- [x] (fixed 1fbf32c) to_launcher.py: app hand-over works (DeskBar `launcher` -> deep sleep -> Launcher boot screen), but
       `nav sel` on the boot screen was lost: taskInputHandler resetGlobals() wipes flags every 75 ms and the
       boot loop (full-frame redraw) misses them. Fix: console-injected press/tap kept across resets until a
       reader clears it, max 300 ms (main.cpp taskInputHandler + serial_console.cpp).
       Installed new DeskBar (label deskb1) from SD via CLI nav; Bruce rebuilding with `launcher` cmd.
+- [x] SD back on SPI (fab380f): SDMMC after an SPI app's deep-sleep hand-over failed (card keeps SPI mode).
+- [ ] Two DeskBar copies installed (deskba old, deskb1 new): owner to remove the old one (PMan) or approve CLI removal.
+- [ ] USB drive write ~227 KB/s: MSC write path (single-sector writes?) is the bottleneck; not the SD bus.
+- [ ] Bruce: built OK (3.8 MB merged image on SD /firmware, older build without `launcher`); rebuild with
+      `launcher` cmd in progress on auto; then install from SD and test.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
