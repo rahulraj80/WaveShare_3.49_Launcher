@@ -53,6 +53,12 @@ each piece of work and commit/push it with that work.
       `TFT_FULLFRAME_CANVAS` in lib/HAL/display/ardgfx.cpp (canvas + dirty flag in RUN_ON_MUTEX + 30 Hz
       flush task); `DEFAULT_DISABLED_MENUS` in src/core/config.h to hide RF/NRF24/IR/RFID/LoRa/GPS/
       Ethernet/FM; board folder boards/waveshare-esp32-s3-touch-lcd-349/.
+- [x] Owner: DeskBar installed from SD and works; other Launcher features work.
+- [ ] SD slow (~200 KB/s over USB MSC): SPI at 4 MHz; the MSC 40/20 MHz probe fell back. Switch the
+      ws349 Launcher to SD_MMC 1-bit (CLK 41, CMD 39, D0 40; GPIO38 = D3 held high), like the vendor
+      04_SD_Card example. DeskBar stays on SPI.
+- [ ] Web UI delete of Music/old unclear; owner to refresh and check. deleteFromSd() is recursive.
+      Not logging into the WUI myself (credential entry on a LAN host is off-limits).
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
