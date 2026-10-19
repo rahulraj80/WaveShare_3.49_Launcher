@@ -47,7 +47,7 @@ Build flags required for `Serial` on the native USB port:
 | 16 | SYS_OUT = PWR key sense | input, pull-up, active low [tested] |
 | 17 / 18 | **Touch I2C** SDA / SCL (I2C_NUM_1) | [tested]: DeskBar uses this bus and touch works. Closes the wiki's "touch on 47/48?" caveat. |
 | 21 | LCD TE | defined, unused by DeskBar |
-| 38–41 | SD card | SPI: CS 38 / MOSI 39 / MISO 40 / SCK 41 (DeskBar); SDMMC 1-bit: CMD 39 / D0 40 / CLK 41 (vendor) |
+| 38–41 | SD card | SPI: CS 38 / MOSI 39 / MISO 40 / SCK 41 at 4 MHz [tested]: DeskBar plays music from SD. SDMMC 1-bit: CMD 39 / D0 40 / CLK 41 (vendor) |
 | 42 | Backlight PWM / AP3032 feedback | **inverted**, see below |
 | 45 | I2S DOUT (to ES8311) | |
 | 46 | I2S LRCK | |
@@ -159,7 +159,7 @@ practical minimum for text.** This drives the scaling rules in
 ## Power
 
 - Charger ETA6098. No fuel gauge and no PMIC on I2C: battery state is ADC only.
-- Battery: `mV = adc_mV × 3`. "Charging" is a heuristic (≥ about 4.02 V);
+- Battery: `mV = adc_mV × 3`. Live check 2026-10-19 via DeskBar CLI `batt`: ADC 1361 mV → 4.09 V. "Charging" is a heuristic (≥ about 4.02 V);
   there is no charge-status pin.
 - Power off = EXIO6 (SYS_EN) ← 0. DeskBar uses a 2 s PWR hold.
 - No deep or light sleep in DeskBar. "Screen off" = backlight off and flush
@@ -191,4 +191,6 @@ practical minimum for text.** This drives the scaling rules in
   serial-synchronised webcam capture with mean-BGR per state. Use it to prove
   the panel latches pixels before debugging anything else.
 - The DeskBar serial CLI (`bl <n>`, simulated taps and swipes) is the
-  remote-control pattern worth copying.
+  remote-control pattern worth copying. Read-only commands that don't change the
+  screen: `ping`, `help`, `status`, `batt`, `telemetry`. Open COM11 with DTR/RTS
+  cleared before `open()` so the board doesn't reset.

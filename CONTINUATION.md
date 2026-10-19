@@ -11,9 +11,9 @@ each piece of work and commit/push it with that work.
   except LICENSE/README). Design: `notes/06-bsp-library-design.md`.
 
 ## In progress
-- [ ] Check DeskBar's SD card status over the serial CLI (R2 in
-      `notes/04-open-questions-and-risks.md`). The owner reports SD music
-      playback works, which contradicts the old "SD never mounts" logs.
+- [x] DeskBar SD check: closed. Mount success is logged at debug level only;
+      SD works at 4 MHz SPI (see R2).
+- [ ] Launcher Phase 0 (next).
 
 ## Next up
 1. Launcher Phase 0 (`notes/00-launcher-port-plan.md`): submodules, baseline
@@ -34,4 +34,3 @@ each piece of work and commit/push it with that work.
 ## Open hardware tests (owner)
 - BOOT pressed just after reset → Launcher?
 - TCA9554 state survives `esp_restart()` into another app?
-- SD mount in the Launcher.
