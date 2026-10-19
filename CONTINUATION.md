@@ -37,8 +37,8 @@ each piece of work and commit/push it with that work.
       CLI `bl <n>` save, then `bl 31` on the device.
 - [x] DeskBar Launcher build (TuneBar repo, branch `launcher-build`, 136037f): env `deskbar-launcher`,
       partitions `launcher_app5MB_littlefs.csv` (app 5 MB @0x10000, LittleFS label `littlefs` @0x510000;
-      NOT `spiffs`, which the Launcher shrinks to 448 KB), no in-app OTA, CLI `launcher` (erase otadata +
-      restart). Built on auto with `bash scripts/build_launcher_image.sh` -> `sketch/deskbar-2.6.1-launcher.bin`
+      NOT `spiffs`, which the Launcher shrinks to 448 KB), no in-app OTA, CLI `launcher` (100 ms deep sleep;
+      erasing otadata does NOT work, the bootloader then falls back to ota_0). Built on auto with `bash scripts/build_launcher_image.sh` -> `sketch/deskbar-2.6.1-launcher.bin`
       (7.27 MB; app 4.24 MB = 81% of slot). Copied to SD `E:\firmware\` via Launcher USB mode (hash verified).
 - [ ] (PAUSED: owner is learning the current features first; decision D7 in notes/05-decisions.md)
       Likely fix on S3: in src/massStorage.cpp restoreUsbSerial(), call
@@ -134,5 +134,4 @@ Source: `opencode_knowledge/wiki/projects/tunebar/research/remote-build-and-flas
   not `pio -t upload`.
 
 ## Open hardware tests (owner)
-- BOOT pressed just after reset → Launcher?
 - TCA9554 state survives `esp_restart()` into another app?

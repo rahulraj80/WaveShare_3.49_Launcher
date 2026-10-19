@@ -22,13 +22,14 @@ DeskBar already runs natively on this board. This is about packaging, not portin
    OTA slot. Under the Launcher that may be another installed app. Add a
    `LAUNCHER_BUILD` flag that hides or blocks in-app OTA and points the user to
    the Launcher catalogue.
-3. **"Reboot to Launcher"** menu item and CLI command (`launcher`).
+3. CLI command `launcher`: 100 ms deep sleep, which the keyboot bootloader turns into a Launcher
+   start (done, TuneBar `launcher-build` cbec713). A menu item could call the same code.
 4. **Catalogue:** DeskBar's `releases/firmware_catalog.json` entries can be
    republished as `-launcher.bin` assets and listed in our fork catalogue (D3).
 
 ## Open
-- Confirm the Launcher keyboot bootloader boots a pioarduino 3.3.7 / IDF 5.5
-  app (expected yes; test on hardware).
+- ~~Confirm the keyboot bootloader boots a pioarduino 3.3.7 / IDF 5.5 app~~
+  Verified 2026-10-19: installed from SD, boots, music and LittleFS data intact.
 - App size is about 4.2 MB. The Launcher layout leaves about 14 MB, so it fits.
 
 ## Backup of the original device state

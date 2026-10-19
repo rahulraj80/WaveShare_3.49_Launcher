@@ -61,9 +61,11 @@ Init order is fine: `_setup_gpio()` runs before `tft->begin()`
    board is available for testing.
 2. Buttons per decision D2 (`05-decisions.md`): BOOT click/double/hold =
    Next/Prev/Select; PWR click = Back; PWR hold 2 s = power off.
-3. Launcher-return key: `LAUNCHER_GPIO_KEYS='{{"BOOT", 0}}'` (as on
-   `lilygo-t-display-c5`). Hardware-test the timing: press just after reset,
-   not held through it.
+3. Return to the Launcher: Power-on or the RESET button always opens the Launcher's boot screen (its bootloader
+   starts the Launcher on a power-on or deep-sleep-wake reset). From a running app: its serial
+   `launcher` command, a 100 ms deep sleep (`support_files/to_launcher.py` drives it). The
+   bootloader's GPIO key (CFG > GPIO on boot starts Launcher) is off by default and unused here:
+   BOOT held through a reset enters ROM download mode.
 
 ### Phase 3: UI fit at 640×172 (shared code: every board is affected)
 From the code survey:

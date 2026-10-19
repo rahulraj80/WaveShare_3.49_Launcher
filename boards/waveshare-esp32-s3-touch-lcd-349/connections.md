@@ -45,8 +45,8 @@ power-cycle the card, so it stays in SPI mode and an SDMMC init fails.
 
 ## Inputs
 - **BOOT (GPIO0)**: single = Next, double = Prev, hold = Select.
-  - Also the Launcher key: press it **just after** reset or power-on, not
-    held through the reset edge (that enters download mode).
+  - Not a Launcher key: held through a reset it enters ROM download mode.
+    Power-on or RESET opens the Launcher; apps return with a deep sleep.
 - **PWR (GPIO16 = SYS_OUT, active LOW)**: single = Esc, hold 2 s = power off.
 - Touch: AXS15231B, single point.
 

@@ -41,10 +41,15 @@ library) so each port needs one call.
 
 ## 2. Return to Launcher
 
-Per decision D2: BOOT pressed **just after** reset or power-on (Launcher
-keyboot, `LAUNCHER_GPIO_KEYS='{{"BOOT", 0}}'`). Each ported firmware also gets
-a "Reboot to Launcher" menu item. Buttons follow the D2 table in every
-firmware, so users never relearn controls.
+Power-on or the RESET button always opens the Launcher's boot screen (its bootloader
+starts the Launcher on a power-on or deep-sleep-wake reset). From a running app: its serial
+`launcher` command, a 100 ms deep sleep (`support_files/to_launcher.py` drives it). The
+bootloader's GPIO key (CFG > GPIO on boot starts Launcher) is off by default and unused here:
+BOOT held through a reset enters ROM download mode.
+
+Every port must implement the serial `launcher` command (deep sleep 100 ms) and keep the
+SD card on SPI (a deep-sleep hand-over doesn't power-cycle the card). Buttons follow the D2
+table in every firmware, so users never relearn controls.
 
 ## 3. Display port
 

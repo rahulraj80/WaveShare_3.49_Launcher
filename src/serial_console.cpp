@@ -1155,7 +1155,18 @@ void taskSerialConsole(void *parameter) {
                 String line = buffer;
                 buffer = "";
                 line.trim();
-                if (line.length() > 0) handleSerialCommand(line);
+                if (line.length() > 0) {
+#if ARDUINO_USB_CDC_ON_BOOT
+                    // The host just sent a command, so it is reading: wait for room
+                    // instead of dropping the reply (the global timeout is 0 so that
+                    // nobody listening never blocks the UI).
+                    Serial.setTxTimeoutMs(200);
+#endif
+                    handleSerialCommand(line);
+#if ARDUINO_USB_CDC_ON_BOOT
+                    Serial.setTxTimeoutMs(0);
+#endif
+                }
                 // Stop draining here: a just-handled "flash" command may have
                 // already consumed the binary payload directly from Serial; re-checking
                 // Serial.available() from the top keeps that byte stream untouched by

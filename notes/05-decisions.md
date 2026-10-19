@@ -34,14 +34,12 @@ Touch stays the primary input. Buttons are a complete fallback.
 - PWR hold-to-off keeps DeskBar's 2 s convention. Power off = backlight off,
   then EXIO6 (SYS_EN) ← 0.
 - PWR double is left unassigned on purpose, for firmware-specific use.
-- **Return to Launcher**: press and hold **BOOT just after** reset or power-on,
-  not *through* the reset. Holding GPIO0 through the reset edge enters ROM
-  download mode. Uses the Launcher's keyboot `LAUNCHER_GPIO_KEYS='{{"BOOT", 0}}'`,
-  the same as `lilygo-t-display-c5`. **Needs a hardware timing test.**
-  We avoid PWR here because holding PWR is how the board powers on from
-  battery, so every power-on would land in the Launcher.
-- Every port also gets a "Reboot to Launcher" menu item
-  (`esp_ota_set_boot_partition(<launcher test partition>)` then restart).
+- **Return to Launcher** (corrected 2026-10-20; the earlier "BOOT just after reset" plan was
+  wrong): Power-on or the RESET button always opens the Launcher's boot screen (its bootloader
+  starts the Launcher on a power-on or deep-sleep-wake reset). From a running app: its serial
+  `launcher` command, a 100 ms deep sleep (`support_files/to_launcher.py` drives it). The
+  bootloader's GPIO key (CFG > GPIO on boot starts Launcher) is off by default and unused here:
+  BOOT held through a reset enters ROM download mode.
 
 ### D3. Firmware catalogue = union
 The Launcher OTA menu shows **LauncherHub ∪ our fork's catalogue**:
