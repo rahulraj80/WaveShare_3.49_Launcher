@@ -29,3 +29,14 @@ union, flip, battery). Still open:
    Arduino-IDE only upstream)?
 5. **Hardware tests needed from you**: BOOT-after-reset Launcher key timing;
    whether TCA9554 state survives `esp_restart()` into another app.
+
+## Backlog: SD card as a USB drive when connected (owner request 2026-10-19)
+- Want: plug the board into a PC and the SD card appears as a drive.
+- Constraints: the SD can't be mounted by the firmware and the host at once (FAT corruption);
+  the S3 has one USB port, and MSC needs the OTG controller, which takes it away from the
+  built-in USB-Serial/JTAG console (CLI, esptool auto-reset).
+- Proposed: Launcher setting "USB drive when connected" (default on for ws349). In the Launcher,
+  when a host is present, switch to a composite TinyUSB CDC + MSC device (keeps the CLI) and
+  unmount SD; host eject hands it back. Apps unchanged (reboot to the Launcher to copy files).
+- Prerequisite: fix the MSC exit bug (board never re-enumerated as COM after eject).
+- Open: drive inside apps too, or the simpler auto-MSC-only (loses the CLI while connected)?
