@@ -30,10 +30,12 @@ def open_port(port, baud):
     return s
 
 
-def read_reply(s, quiet_s):
-    """Read until the line goes quiet for quiet_s seconds."""
-    buf, last = b"", time.time()
-    while time.time() - last < quiet_s:
+def read_reply(s, quiet_s, max_s=5.0):
+    """Read until the line goes quiet for quiet_s seconds, or max_s at most
+    (an app that logs continuously never goes quiet)."""
+    buf, start = b"", time.time()
+    last = start
+    while time.time() - last < quiet_s and time.time() - start < max_s:
         chunk = s.read(65536)
         if chunk:
             buf += chunk
@@ -74,7 +76,11 @@ def main():
     ap.add_argument("-q", "--quiet", type=float, default=0.6, help="seconds of silence that end a reply")
     args = ap.parse_args()
 
-    s = open_port(args.port, args.baud)
+    try:
+        s = open_port(args.port, args.baud)
+    except serial.SerialException as e:
+        print(f"ERR cannot open {args.port}: {e}")
+        return 1
     try:
         s.reset_input_buffer()
         for cmd in args.commands:
@@ -88,9 +94,19 @@ def main():
                 read_reply(s, args.quiet)  # drain ===END_BMP===
             else:
                 sys.stdout.write(read_reply(s, args.quiet).decode("utf-8", "replace"))
+    except serial.SerialException:
+        # Expected when a command re-enumerates USB (USB drive mode, reboot, deep sleep).
+        print("port closed by the device (it re-enumerated or rebooted)")
+    except TimeoutError as e:
+        print(f"ERR {e}")
+        return 1
     finally:
-        s.close()
+        try:
+            s.close()
+        except serial.SerialException:
+            pass
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
