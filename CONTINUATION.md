@@ -40,6 +40,11 @@ each piece of work and commit/push it with that work.
       NOT `spiffs`, which the Launcher shrinks to 448 KB), no in-app OTA, CLI `launcher` (erase otadata +
       restart). Built on auto with `bash scripts/build_launcher_image.sh` -> `sketch/deskbar-2.6.1-launcher.bin`
       (7.27 MB; app 4.24 MB = 81% of slot). Copied to SD `E:\firmware\` via Launcher USB mode (hash verified).
+- [ ] (PAUSED: owner is learning the current features first; decision D7 in notes/05-decisions.md)
+      Likely fix on S3: in src/massStorage.cpp restoreUsbSerial(), call
+      `usb_serial_jtag_ll_phy_enable_external(false)` (hal/usb_serial_jtag_ll.h) to map the internal
+      FSLS PHY back to USB-Serial/JTAG; usb_new_phy(INT) left it on the OTG wrap. Plus: leave MSC
+      on USB unplug and on any key/tap.
 - [ ] BUG: after ejecting the SD drive, the Launcher left USB mode but the board never came back on USB
       (no COM11, no VID 303A device). `endUsbRaw()` -> `restoreUsbSerial()` in src/massStorage.cpp. Investigate.
 - [ ] Owner: RESET, then install DeskBar from SD > firmware > deskbar-2.6.1-launcher.bin; verify app +
