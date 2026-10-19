@@ -86,3 +86,13 @@ patching the firmware's input-abstraction file over sprinkling `#ifdef`s.
 
 If the board support is small and clean, offer it upstream to the firmware
 author as a PR. That is the only way it survives their next release.
+
+## 8. Updating an installed app (keep its data)
+
+- **First install:** the merged image (with its data partition) from SD > Install.
+- **Every update after that:** app-only, into the existing slot:
+  `python support_files/update_app.py COM11 <slot label> firmware.bin`. It goes to the Launcher,
+  reads the slot from `partitions`, checks the size and writes with esptool. Data is untouched.
+- **Never** update by installing the full image from SD again: the Launcher makes a new slot
+  (duplicate app) and writes the image's data partition over the existing one. That wiped
+  DeskBar's `/wifi.json` on 2026-10-19 (restored from the full flash backup).

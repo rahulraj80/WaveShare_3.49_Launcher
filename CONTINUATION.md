@@ -95,11 +95,13 @@ each piece of work and commit/push it with that work.
       gone); console replies no longer dropped; BOOT-key docs corrected + LAUNCHER_GPIO_KEYS removed;
       serial_cli.py robust; Bruce `launcher` + `screenshot`, installed (brucew @0x790000) and verified:
       renders 640x172, RF/NRF24/IR/RFID/LoRa/GPS/Ethernet/FM hidden, to_launcher works from Bruce.
-- [ ] DeskBar WiFi lost: the -launcher image ships a fresh LittleFS (data/), so installing replaced the
+- [x] (restored 2026-10-20 with owner approval; WiFi back on 192.168.3.4) DeskBar WiFi lost: the -launcher image ships a fresh LittleFS (data/), so installing replaced the
       device's LittleFS incl. /wifi.json. Original LittleFS extracted from the full backup (0xE20000,
       0x1E0000, has wifi.json/stations/playlist) to scratchpad ws349/deskbar_littlefs_backup.bin;
       writing it to littlefs @0x1A0000 NEEDS OWNER APPROVAL (blocked as destructive).
-      Root cause to fix: an SD reinstall of the same app wasn't recognised as an update (no prompt,
+      Root cause: Launcher SD install always makes a new slot and reuses same-label data partitions
+      (by design). Procedure fix: updates go app-only via support_files/update_app.py (verified on Bruce).
+      Old note: an SD reinstall of the same app wasn't recognised as an update (no prompt,
       new slot deskb1, data overwritten). Investigate sd_functions.cpp prevInstall/loadInstalledFromConfig.
 - [ ] Bruce's data partition takes all remaining flash (declared 11.4 MB > LAUNCHER_DEFAULT_SPIFFS_THRESHOLD).
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch

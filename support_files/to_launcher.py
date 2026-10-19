@@ -56,7 +56,10 @@ def in_launcher(port):
 
 
 def main():
-    port = sys.argv[1] if len(sys.argv) > 1 else "COM11"
+    return main_for(sys.argv[1] if len(sys.argv) > 1 else "COM11")
+
+
+def main_for(port):
     if in_launcher(port):
         print("already in the Launcher")
         return 0
