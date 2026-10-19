@@ -31,7 +31,7 @@ each piece of work and commit/push it with that work.
       Select at 0.55-1.2 s but Esc above 1.2 s. Fix: with HAS_2_BUTTONS (PWR is Esc) any hold >= 0.55 s is
       Select. Only this board uses poll_1 with HAS_2_BUTTONS.
 - [x] Owner: finger touch, BOOT/PWR buttons, battery on/off all work.
-- [ ] Brightness: owner's 31% came back as 100 (device had `"bright":100` stored; likely the old long-hold=Esc
+- [x] (done, flashed; `bl 31` saved and survived a reboot: settings show "bright":31) Brightness: owner's 31% came back as 100 (device had `"bright":100` stored; likely the old long-hold=Esc
       bug discarded the slider value). Storage already goes to SD config.conf + NVS (saveConfigs ->
       saveIntoNVS). Add `DEFAULT_BRIGHT` (pre_compiler.h, default 100; this board 35) for first boot, make
       CLI `bl <n>` save, then `bl 31` on the device.
