@@ -66,6 +66,11 @@ each piece of work and commit/push it with that work.
       f_chmod before remove/rmdir. (attrib -R from the PC needs a `\*` pattern; my first try missed.)
 - [ ] Web UI delete of Music/old unclear; owner to refresh and check. deleteFromSd() is recursive.
       Not logging into the WUI myself (credential entry on a LAN host is off-limits).
+- [ ] PRIORITY (owner): no manual intervention. (1) verify MSC exit fix; (2) remote route to the Launcher:
+      bootloader forces the Launcher on reset reason 1 (power-on) / 5 (deep-sleep wake) or NVS
+      launcher/LauncherOnKey GPIO (default -1 = off); soft resets (flash, reboot) boot the app. With
+      DDLB=false (default) a deep-sleep wake shows the boot screen; `nav sel` there enters the menu.
+      Plan: every ported app gets CLI `launcher` (100 ms deep sleep); host `support_files/to_launcher.py`.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
