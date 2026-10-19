@@ -19,7 +19,7 @@ each piece of work and commit/push it with that work.
 - [ ] Baseline build `m5stack-cardputer` (pio is at `~/.platformio/penv/Scripts/pio.exe`, not on bash PATH).
 - [x] Add `TOUCH_CTRL_AXS15231B` (committed; not yet compiled) to `src/hal/inputs/touch.cpp` (extends the AXS5106L driver; same report decode,
       different read: write `B5 AB A5 5A 00 00 00 08 00 00 00` to 0x3B on Wire1 17/18, read 8 bytes).
-- [ ] Scaffold `boards/waveshare-esp32-s3-touch-lcd-349/` (BOOT via `hal_buttons_poll_1`, PWR=Esc / 2 s off,
+- [x] Scaffold `boards/waveshare-esp32-s3-touch-lcd-349/` (committed, NOT yet compiled) (BOOT via `hal_buttons_poll_1`, PWR=Esc / 2 s off,
       TCA9554 helper modelled on `boards/elecrow-esp32s3-5in/interface.cpp:34-98`).
 - Finding: Arduino_GFX driver 22 default init = `axs15231b_180640_init_operations` (this panel family);
   `USE_CANVAS` keeps the driver unrotated and pushes full 172x640 frames, matching DeskBar.
