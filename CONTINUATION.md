@@ -13,7 +13,11 @@ each piece of work and commit/push it with that work.
 ## In progress
 - [x] DeskBar SD check: closed. Mount success is logged at debug level only;
       SD works at 4 MHz SPI (see R2).
-- [ ] Launcher Phase 0 (next).
+- [ ] Full flash backup of DeskBar device -> `C:\Users\rahul\OpenCode\backups\deskbar-v2.6.1-full-20261019.bin`
+      (esptool read_flash; NOT in any repo, contains NVS secrets). If it was interrupted, rerun.
+- [ ] Launcher Phase 0: submodules + baseline build (no hardware needed), then scaffold.
+- Owner approved flashing the device (nothing critical on it).
+- DeskBar-as-Launcher-app plan: `notes/ports/deskbar.md`.
 
 ## Next up
 1. Launcher Phase 0 (`notes/00-launcher-port-plan.md`): submodules, baseline

@@ -12,7 +12,7 @@ Working notes for porting the Launcher and other ESP32 firmwares to the
 | [04-open-questions-and-risks.md](04-open-questions-and-risks.md) | Risks and decisions still pending |
 | [05-decisions.md](05-decisions.md) | Owner decisions: forks, buttons, catalogue, flip, licences |
 | [06-bsp-library-design.md](06-bsp-library-design.md) | Proposed shared `WaveShare_3.49_BSP` library |
-| [ports/bruce.md](ports/bruce.md) · [ports/meshtastic.md](ports/meshtastic.md) · [ports/marauder.md](ports/marauder.md) | Plan for each firmware port (recommended order: Bruce, Meshtastic, Marauder) |
+| [ports/bruce.md](ports/bruce.md) · [ports/meshtastic.md](ports/meshtastic.md) · [ports/marauder.md](ports/marauder.md) · [ports/deskbar.md](ports/deskbar.md) | Plan for each firmware port (recommended order: Bruce, Meshtastic, Marauder) |
 
 Source-of-truth order for hardware facts:
 1. DeskBar-AI (`C:\Users\rahul\OpenCode\TuneBar`), which runs on this board.
