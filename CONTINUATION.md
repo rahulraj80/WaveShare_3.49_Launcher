@@ -13,9 +13,16 @@ each piece of work and commit/push it with that work.
 ## In progress
 - [x] DeskBar SD check: closed. Mount success is logged at debug level only;
       SD works at 4 MHz SPI (see R2).
-- [ ] Full flash backup of DeskBar device -> `C:\Users\rahul\OpenCode\backups\deskbar-v2.6.1-full-20261019.bin`
-      (esptool read_flash; NOT in any repo, contains NVS secrets). If it was interrupted, rerun.
-- [ ] Launcher Phase 0: submodules + baseline build (no hardware needed), then scaffold.
+- [x] Full flash backup done: `C:\Users\rahul\OpenCode\backups\deskbar-v2.6.1-full-20261019.bin`
+      (+ .sha256). NOT in any repo (NVS secrets). Restore: esptool write_flash 0 <file>.
+- [x] Submodules initialised.
+- [ ] Baseline build `m5stack-cardputer` (pio is at `~/.platformio/penv/Scripts/pio.exe`, not on bash PATH).
+- [ ] Add `TOUCH_CTRL_AXS15231B` to `src/hal/inputs/touch.cpp` (extends the AXS5106L driver; same report decode,
+      different read: write `B5 AB A5 5A 00 00 00 08 00 00 00` to 0x3B on Wire1 17/18, read 8 bytes).
+- [ ] Scaffold `boards/waveshare-esp32-s3-touch-lcd-349/` (BOOT via `hal_buttons_poll_1`, PWR=Esc / 2 s off,
+      TCA9554 helper modelled on `boards/elecrow-esp32s3-5in/interface.cpp:34-98`).
+- Finding: Arduino_GFX driver 22 default init = `axs15231b_180640_init_operations` (this panel family);
+  `USE_CANVAS` keeps the driver unrotated and pushes full 172x640 frames, matching DeskBar.
 - Owner approved flashing the device (nothing critical on it).
 - DeskBar-as-Launcher-app plan: `notes/ports/deskbar.md`.
 
