@@ -16,8 +16,12 @@ each piece of work and commit/push it with that work.
 - [x] Full flash backup done: `C:\Users\rahul\OpenCode\backups\deskbar-v2.6.1-full-20261019.bin`
       (+ .sha256). NOT in any repo (NVS secrets). Restore: esptool write_flash 0 <file>.
 - [x] Submodules initialised.
-- [ ] Build on `auto` (see "Build workflow" below): clone `ws349-port` to `~/scripts/WaveShare_3.49_Launcher`,
-      build `waveshare-esp32-s3-touch-lcd-349`. Board env is committed but NOT yet compiled.
+- [x] Built on `auto` (`~/scripts/WaveShare_3.49_Launcher`, 5 min, no warnings in our files; app 1.25 MB =
+      79% of the 1.5 MB test partition). Flashed 2026-10-19 (bootloader 0x0, partitions 0x8000,
+      boot_app0 0xE000, app 0x10000). Boot log: TCA9554 config 0x9D, SYS_EN latched, SD mounted,
+      touch probe OK, boot screen reached, serial console answers `help`.
+- [ ] Owner visual check: picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
+      position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
       Backlight PWM is 5 kHz (HAL) vs 50 kHz in DeskBar: watch for flicker/whine.
 - Local build attempt on windows-box was a mistake (owner: no local compiles). It was stopped;
