@@ -82,6 +82,14 @@ each piece of work and commit/push it with that work.
 - [ ] USB drive write ~227 KB/s: MSC write path (single-sector writes?) is the bottleneck; not the SD bus.
 - [ ] Bruce: built OK (3.8 MB merged image on SD /firmware, older build without `launcher`); rebuild with
       `launcher` cmd in progress on auto; then install from SD and test.
+- [ ] FIX MY ERRORS (owner, 2026-10-20), then report:
+      1. remove old DeskBar copy (deskba + its data partition) left by my reinstall;
+      2. BOOT-key docs are wrong: bootloader key check is off by default (NVS LauncherOnKey=-1) and BOOT
+         held through reset = download mode. Power-on/RESET already opens the Launcher. Drop
+         LAUNCHER_GPIO_KEYS from the board, fix D2, playbook, connections.md, risks;
+      3. Orientation menu offers 90/270 on ws349 (D4 says 0/180 only);
+      4. serial_cli.py traceback when the port drops mid-command;
+      5. stale Bruce image on SD: copy the `launcher` build, install, test hand-over both ways.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
