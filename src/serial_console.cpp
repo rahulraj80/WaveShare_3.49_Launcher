@@ -253,6 +253,25 @@ static void putLe32(uint8_t *p, uint32_t v) {
     for (int i = 0; i < 4; ++i) p[i] = static_cast<uint8_t>(v >> (8 * i));
 }
 
+// USB-CDC drops whatever doesn't fit its TX buffer, so keep feeding it until
+// the host has taken everything; give up after 2 s without progress.
+static bool consoleWriteAll(const uint8_t *p, size_t n) {
+    unsigned long lastProgress = launcherMillis();
+    while (n > 0) {
+        size_t k = Serial.write(p, n);
+        if (k > 0) {
+            p += k;
+            n -= k;
+            lastProgress = launcherMillis();
+        } else if (launcherMillis() - lastProgress > 2000) {
+            return false;
+        } else {
+            vTaskDelay(pdMS_TO_TICKS(1));
+        }
+    }
+    return true;
+}
+
 // Streams the canvas as a 24-bit BMP, turned the way the user sees it:
 // ===BEGIN_BMP:<bytes>=== <bmp> ===END_BMP=== (same framing as DeskBar-AI).
 static void handleScreenshotCommand() {
@@ -283,8 +302,8 @@ static void handleScreenshotCommand() {
     putLe32(hdr + 34, stride * h);
 
     launcherConsolePrintf("===BEGIN_BMP:%u===\n", static_cast<unsigned>(size));
-    Serial.write(hdr, sizeof(hdr));
-    for (int32_t y = h - 1; y >= 0; --y) { // BMP rows go bottom-up
+    bool ok = consoleWriteAll(hdr, sizeof(hdr));
+    for (int32_t y = h - 1; ok && y >= 0; --y) { // BMP rows go bottom-up
         uint8_t *d = row;
         for (int32_t x = 0; x < w; ++x) {
             // Inverse of Arduino_Canvas::writePixelPreclipped()
@@ -301,10 +320,10 @@ static void handleScreenshotCommand() {
             *d++ = static_cast<uint8_t>((c >> 11) * 255 / 31);
         }
         while (d < row + stride) *d++ = 0;
-        Serial.write(row, stride);
+        ok = consoleWriteAll(row, stride);
     }
     free(row);
-    launcherConsolePrintln("\n===END_BMP===");
+    launcherConsolePrintln(ok ? "\n===END_BMP===" : "\nERR screenshot aborted, host stopped reading");
 }
 #endif
 
