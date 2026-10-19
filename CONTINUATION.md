@@ -72,6 +72,11 @@ each piece of work and commit/push it with that work.
       launcher/LauncherOnKey GPIO (default -1 = off); soft resets (flash, reboot) boot the app. With
       DDLB=false (default) a deep-sleep wake shows the boot screen; `nav sel` there enters the menu.
       Plan: every ported app gets CLI `launcher` (100 ms deep sleep); host `support_files/to_launcher.py`.
+- [ ] to_launcher.py: app hand-over works (DeskBar `launcher` -> deep sleep -> Launcher boot screen), but
+      `nav sel` on the boot screen was lost: taskInputHandler resetGlobals() wipes flags every 75 ms and the
+      boot loop (full-frame redraw) misses them. Fix: console-injected press/tap kept across resets until a
+      reader clears it, max 300 ms (main.cpp taskInputHandler + serial_console.cpp).
+      Installed new DeskBar (label deskb1) from SD via CLI nav; Bruce rebuilding with `launcher` cmd.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
