@@ -302,9 +302,16 @@ bool launcherBootCurrentApp() {
     // installed app (cleared by a removal, or a table with a gap in its OTA
     // subtypes) the bootloader falls back to the Launcher and this loops, so
     // pick one explicitly instead.
+    // esp_ota_get_boot_partition() can still name an app the bootloader won't
+    // reach (ota_1 with no ota_0), so also check its index against the count.
     const esp_partition_t *boot = esp_ota_get_boot_partition();
-    for (const LauncherAppMetadata &app : apps) {
-        if (boot && boot->subtype != ESP_PARTITION_SUBTYPE_APP_TEST && app.label == boot->label) return true;
+    LauncherPartitionTable table;
+    if (boot && launcherPartitionReadCurrent(table) &&
+        launcherPartitionOtaIndex(boot->subtype) >= 0 &&
+        launcherPartitionOtaIndex(boot->subtype) < launcherPartitionCountOtaApps(table)) {
+        for (const LauncherAppMetadata &app : apps) {
+            if (app.label == boot->label) return true;
+        }
     }
     return launcherBootAppByLabel(apps[0].label.c_str());
 }
