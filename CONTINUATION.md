@@ -20,7 +20,11 @@ each piece of work and commit/push it with that work.
       79% of the 1.5 MB test partition). Flashed 2026-10-19 (bootloader 0x0, partitions 0x8000,
       boot_app0 0xE000, app 0x10000). Boot log: TCA9554 config 0x9D, SYS_EN latched, SD mounted,
       touch probe OK, boot screen reached, serial console answers `help`.
-- [ ] Owner visual check: picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
+- [x] Owner: screen is visible.
+- [ ] DeskBar-style CLI in `src/serial_console.cpp`: `ping`, `status`, `bl <0-100>`, `tap [x y]` (HAS_TOUCH),
+      `screenshot` (USE_CANVAS + Arduino_GFX, BMP framed `===BEGIN_BMP:n===`/`===END_BMP===`), plus host tool
+      `support_files/serial_cli.py`. Then build on auto and reflash.
+- [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
       Backlight PWM is 5 kHz (HAL) vs 50 kHz in DeskBar: watch for flicker/whine.
