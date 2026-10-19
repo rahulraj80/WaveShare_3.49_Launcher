@@ -1,6 +1,8 @@
 #include "serial_console.h"
 
 #include "app_registry.h"
+#include "display.h"
+#include "hal/inputs/touch.h"
 #include "idf/idf_update.h"
 #include "idf/idf_wifi.h"
 #include "idf/launcher_platform.h"
@@ -17,7 +19,11 @@
 #include <esp_flash.h>
 #include <esp_ota_ops.h>
 #include <globals.h>
+#include <interface.h>
 #include <vector>
+#if defined(USE_CANVAS) && defined(USE_ARDUINO_GFX)
+#include <canvas/Arduino_Canvas.h>
+#endif
 
 // ---------------------------------------------------------------------------
 // Serial command grammar (one command per line, space separated tokens):
@@ -203,6 +209,104 @@ static void handleRebootCommand() {
     launcherDelayMs(100);
     releaseHeapObjectsAndReboot();
 }
+
+static void handleStatusCommand() {
+    launcherConsolePrintf(
+        "OK status batt=%d%% heap=%u psram=%u rot=%u screen=%dx%d uptime=%lus\n",
+        getBattery(),
+        static_cast<unsigned>(ESP.getFreeHeap()),
+        static_cast<unsigned>(ESP.getFreePsram()),
+        rotation,
+        tftWidth,
+        tftHeight,
+        static_cast<unsigned long>(launcherMillis() / 1000)
+    );
+#if defined(ANALOG_BAT_PIN) && defined(ANALOG_BAT_MULTIPLIER)
+    launcherConsolePrintf(
+        "OK batt vbat=%umV\n", static_cast<unsigned>(analogReadMilliVolts(ANALOG_BAT_PIN) * ANALOG_BAT_MULTIPLIER)
+    );
+#endif
+}
+
+// Not saved: the next boot restores the brightness from the settings.
+static void handleBrightnessCommand(const String &arg) {
+    int value = constrain(arg.toInt(), 0, 100);
+    _setBrightness(static_cast<uint8_t>(value));
+    launcherConsolePrintf("OK bl %d\n", value);
+}
+
+#if defined(HAS_TOUCH)
+// Goes through the same path as a real touch, so a tap on a dimmed screen
+// only wakes it, exactly like a finger would.
+static void handleTapCommand(const std::vector<String> &tokens) {
+    LTouchPoint t;
+    t.x = tokens.size() >= 3 ? tokens[1].toInt() : tftWidth / 2;
+    t.y = tokens.size() >= 3 ? tokens[2].toInt() : tftHeight / 2;
+    t.pressed = true;
+    if (hal_touch_apply(t)) launcherConsolePrintf("OK tap %u %u\n", t.x, t.y);
+    else launcherConsolePrintln("OK tap woke the screen");
+}
+#endif
+
+#if defined(USE_CANVAS) && defined(USE_ARDUINO_GFX)
+static void putLe32(uint8_t *p, uint32_t v) {
+    for (int i = 0; i < 4; ++i) p[i] = static_cast<uint8_t>(v >> (8 * i));
+}
+
+// Streams the canvas as a 24-bit BMP, turned the way the user sees it:
+// ===BEGIN_BMP:<bytes>=== <bmp> ===END_BMP=== (same framing as DeskBar-AI).
+static void handleScreenshotCommand() {
+    Arduino_GFX *canvas = tft->native();
+    uint16_t *fb = canvas ? static_cast<Arduino_Canvas *>(canvas)->getFramebuffer() : nullptr;
+    if (!fb) {
+        launcherConsolePrintln("ERR no framebuffer");
+        return;
+    }
+    const int32_t w = canvas->width();
+    const int32_t h = canvas->height();
+    const uint8_t rot = canvas->getRotation();
+    const uint32_t stride = (static_cast<uint32_t>(w) * 3 + 3) & ~3u;
+    const uint32_t size = 54 + stride * h;
+    uint8_t *row = static_cast<uint8_t *>(malloc(stride));
+    if (!row) {
+        launcherConsolePrintln("ERR out of memory");
+        return;
+    }
+    uint8_t hdr[54] = {'B', 'M'};
+    putLe32(hdr + 2, size);
+    hdr[10] = 54;
+    hdr[14] = 40;
+    putLe32(hdr + 18, w);
+    putLe32(hdr + 22, h);
+    hdr[26] = 1;
+    hdr[28] = 24;
+    putLe32(hdr + 34, stride * h);
+
+    launcherConsolePrintf("===BEGIN_BMP:%u===\n", static_cast<unsigned>(size));
+    Serial.write(hdr, sizeof(hdr));
+    for (int32_t y = h - 1; y >= 0; --y) { // BMP rows go bottom-up
+        uint8_t *d = row;
+        for (int32_t x = 0; x < w; ++x) {
+            // Inverse of Arduino_Canvas::writePixelPreclipped()
+            int32_t i;
+            switch (rot) {
+                case 1: i = x * h + (h - 1 - y); break;
+                case 2: i = (h - 1 - y) * w + (w - 1 - x); break;
+                case 3: i = (w - 1 - x) * h + y; break;
+                default: i = y * w + x; break;
+            }
+            const uint16_t c = fb[i];
+            *d++ = static_cast<uint8_t>((c & 0x1F) * 255 / 31);
+            *d++ = static_cast<uint8_t>(((c >> 5) & 0x3F) * 255 / 63);
+            *d++ = static_cast<uint8_t>((c >> 11) * 255 / 31);
+        }
+        while (d < row + stride) *d++ = 0;
+        Serial.write(row, stride);
+    }
+    free(row);
+    launcherConsolePrintln("\n===END_BMP===");
+}
+#endif
 
 static const char *partitionTypeName(uint8_t type) {
     if (type == 0x00) return "app";
@@ -897,6 +1001,15 @@ static void printWhoami() { launcherConsolePrintln(device_name.c_str()); }
 static void printHelp() {
     launcherConsolePrintln("Commands:");
     launcherConsolePrintln("  nav <NextPress|PrevPress|SelPress|EscPress>");
+    launcherConsolePrintln("  ping");
+    launcherConsolePrintln("  status");
+    launcherConsolePrintln("  bl <0-100>");
+#if defined(HAS_TOUCH)
+    launcherConsolePrintln("  tap [x y]");
+#endif
+#if defined(USE_CANVAS) && defined(USE_ARDUINO_GFX)
+    launcherConsolePrintln("  screenshot");
+#endif
 #if defined(HAS_RESISTIVE_TOUCH)
     launcherConsolePrintln("  calibrate");
     launcherConsolePrintln("  calibrate set <Xmax> <Xmin> <Ymax> <Ymin> <rot>");
@@ -945,6 +1058,20 @@ static void handleSerialCommand(const String &line) {
         handleNavCommand(tokens[1]);
     } else if (cmd.equalsIgnoreCase("reboot")) {
         handleRebootCommand();
+    } else if (cmd.equalsIgnoreCase("ping")) {
+        launcherConsolePrintln("PONG");
+    } else if (cmd.equalsIgnoreCase("status")) {
+        handleStatusCommand();
+    } else if (cmd.equalsIgnoreCase("bl") && tokens.size() >= 2) {
+        handleBrightnessCommand(tokens[1]);
+#if defined(HAS_TOUCH)
+    } else if (cmd.equalsIgnoreCase("tap")) {
+        handleTapCommand(tokens);
+#endif
+#if defined(USE_CANVAS) && defined(USE_ARDUINO_GFX)
+    } else if (cmd.equalsIgnoreCase("screenshot")) {
+        handleScreenshotCommand();
+#endif
     } else if (cmd.equalsIgnoreCase("partitions")) {
         printPartitionTable();
     } else if (cmd.equalsIgnoreCase("partition") && tokens.size() >= 2) {
