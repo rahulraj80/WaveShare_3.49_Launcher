@@ -80,3 +80,9 @@ Why not inside DeskBar-AI:
 ### D6. Battery
 18650, 2000 mAh. ADC on GPIO4, `V_bat = V_adc × 3` (DeskBar, tested).
 If the Waveshare wiki and DeskBar disagree, DeskBar wins.
+
+### D7. SD card as a USB drive: manual toggle (2026-10-19)
+Not automatic. The Launcher's **USB** tile hands the SD card to the PC and cuts the firmware off
+from it. It switches back when (a) the USB cable is unplugged or the PC ejects the drive, or
+(b) any button press or tap on the device. After switching back the board must be COM11 again
+(fix the current exit bug).
