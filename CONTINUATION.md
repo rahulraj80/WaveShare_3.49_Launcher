@@ -35,6 +35,19 @@ each piece of work and commit/push it with that work.
       bug discarded the slider value). Storage already goes to SD config.conf + NVS (saveConfigs ->
       saveIntoNVS). Add `DEFAULT_BRIGHT` (pre_compiler.h, default 100; this board 35) for first boot, make
       CLI `bl <n>` save, then `bl 31` on the device.
+- [x] DeskBar Launcher build (TuneBar repo, branch `launcher-build`, 136037f): env `deskbar-launcher`,
+      partitions `launcher_app5MB_littlefs.csv` (app 5 MB @0x10000, LittleFS label `littlefs` @0x510000;
+      NOT `spiffs`, which the Launcher shrinks to 448 KB), no in-app OTA, CLI `launcher` (erase otadata +
+      restart). Built on auto with `bash scripts/build_launcher_image.sh` -> `sketch/deskbar-2.6.1-launcher.bin`
+      (7.27 MB; app 4.24 MB = 81% of slot). Copied to SD `E:\firmware\` via Launcher USB mode (hash verified).
+- [ ] BUG: after ejecting the SD drive, the Launcher left USB mode but the board never came back on USB
+      (no COM11, no VID 303A device). `endUsbRaw()` -> `restoreUsbSerial()` in src/massStorage.cpp. Investigate.
+- [ ] Owner: RESET, then install DeskBar from SD > firmware > deskbar-2.6.1-launcher.bin; verify app +
+      LittleFS (music/stations) + `launcher` CLI return + BOOT-after-reset return.
+- [ ] Bruce port (next): see notes/ports/bruce.md. Plan: branch `ws349-port` in the Bruce fork;
+      `TFT_FULLFRAME_CANVAS` in lib/HAL/display/ardgfx.cpp (canvas + dirty flag in RUN_ON_MUTEX + 30 Hz
+      flush task); `DEFAULT_DISABLED_MENUS` in src/core/config.h to hide RF/NRF24/IR/RFID/LoRa/GPS/
+      Ethernet/FM; board folder boards/waveshare-esp32-s3-touch-lcd-349/.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
