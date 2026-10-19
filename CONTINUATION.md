@@ -57,6 +57,9 @@ each piece of work and commit/push it with that work.
 - [ ] SD slow (~200 KB/s over USB MSC): SPI at 4 MHz; the MSC 40/20 MHz probe fell back. Switch the
       ws349 Launcher to SD_MMC 1-bit (CLK 41, CMD 39, D0 40; GPIO38 = D3 held high), like the vendor
       04_SD_Card example. DeskBar stays on SPI.
+- [ ] Delete fails on read-only entries: every folder under SD Music/old is ReadOnly (Windows marks
+      customised folders that way); FatFs f_unlink refuses AM_RDO. Fix: deleteFromSd() clears AM_RDO via
+      f_chmod before remove/rmdir. (attrib -R from the PC needs a `\*` pattern; my first try missed.)
 - [ ] Web UI delete of Music/old unclear; owner to refresh and check. deleteFromSd() is recursive.
       Not logging into the WUI myself (credential entry on a LAN host is off-limits).
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
