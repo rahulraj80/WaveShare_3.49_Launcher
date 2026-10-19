@@ -111,7 +111,13 @@ void hal_buttons_poll_1(const DeviceButtons &cfg) {
     static unsigned long buttonDownAt = 0;
     static uint8_t drawn = 2;
     constexpr unsigned long kSelectPressMs = 550;
+#if defined(HAS_2_BUTTONS)
+    // The board's second button is Esc (e.g. waveshare-esp32-s3-touch-lcd-349's
+    // PWR key), so a hold of any length is Select.
+    constexpr unsigned long kBackPressMs = ~0UL;
+#else
     constexpr unsigned long kBackPressMs = 1200;
+#endif
     constexpr unsigned long kDoublePressIntervalMs = 300;
 
     static unsigned long lastButtonReleaseTime = 0;
