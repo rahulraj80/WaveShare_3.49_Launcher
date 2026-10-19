@@ -16,7 +16,6 @@
 #define TOUCH_I2C_SCL 18
 #define BOOT_BTN 0
 #define PWR_BTN 16 // SYS_OUT: PWR key sense, active LOW
-#define SD_D3 38   // card D3: high keeps it in SD (not SPI) mode
 
 #define TCA9554_ADDR 0x20
 #define TCA9554_REG_OUTPUT 0x01
@@ -89,9 +88,6 @@ void _setup_gpio() {
 
     hal_buttons_init(buttonsCfg(), 1);
     launcherGpioInputPullup(PWR_BTN);
-
-    launcherGpioOutput(SD_D3);
-    launcherGpioWrite(SD_D3, HIGH);
 }
 
 /***************************************************************************************

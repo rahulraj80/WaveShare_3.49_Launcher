@@ -17,13 +17,14 @@ Full reference with sources: `notes/01-hardware-reference.md`.
 - Below about 91/255 brightness (duty above 164) the screen looks dead, so
   the curve stops there.
 
-## SD card on the SD host (SDMMC, 1-bit)
-| CLK | CMD | D0 | D3 |
+## SD card over SPI
+| SCK | MISO | MOSI | CS |
 | :---: | :---: | :---: | :---: |
-| 41 | 39 | 40 | 38 (held high) |
+| 41 | 40 | 39 | 38 |
 
-DeskBar drives the same card over SPI (CS 38, MOSI 39, MISO 40, SCK 41) at
-4 MHz; the Launcher uses the SD host, which is several times faster.
+Same mode as DeskBar and Bruce. Don't switch the Launcher to the SD host
+(SDMMC, CLK 41 / CMD 39 / D0 40): an app hand-over by deep sleep doesn't
+power-cycle the card, so it stays in SPI mode and an SDMMC init fails.
 
 ## I2C buses
 - **I2C0 (Wire)**: SDA 47 / SCL 48.
