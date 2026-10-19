@@ -182,23 +182,33 @@ static void printPartitionCreateHelp() {
     launcherConsolePrintln("  <size>: decimal or 0x-prefixed hex");
 }
 
+// Kept alive across the input task's per-poll reset until read (main.cpp).
+extern volatile bool *injectedPress;
+extern bool injectedTouch;
+extern LTouchPoint injectedPoint;
+extern unsigned long injectedAt;
+
 static void handleNavCommand(const String &target) {
+    volatile bool *press = nullptr;
     if (target.equalsIgnoreCase("NextPress") || target.equalsIgnoreCase("next")) {
-        NextPress = true;
+        press = &NextPress;
     } else if (target.equalsIgnoreCase("PrevPress") || target.equalsIgnoreCase("prev")) {
-        PrevPress = true;
+        press = &PrevPress;
     } else if (target.equalsIgnoreCase("SelPress") || target.equalsIgnoreCase("sel")) {
-        SelPress = true;
+        press = &SelPress;
     } else if (target.equalsIgnoreCase("EscPress") || target.equalsIgnoreCase("esc")) {
-        EscPress = true;
+        press = &EscPress;
     } else if (target.equalsIgnoreCase("UpPress") || target.equalsIgnoreCase("up")) {
-        UpPress = true;
+        press = &UpPress;
     } else if (target.equalsIgnoreCase("DownPress") || target.equalsIgnoreCase("down")) {
-        DownPress = true;
+        press = &DownPress;
     } else {
         launcherConsolePrintln("ERR unknown nav target");
         return;
     }
+    *press = true;
+    injectedAt = launcherMillis();
+    injectedPress = press;
     AnyKeyPress = true;
     launcherConsolePrintf("OK nav %s\n", target.c_str());
 }
@@ -244,8 +254,14 @@ static void handleTapCommand(const std::vector<String> &tokens) {
     t.x = tokens.size() >= 3 ? tokens[1].toInt() : tftWidth / 2;
     t.y = tokens.size() >= 3 ? tokens[2].toInt() : tftHeight / 2;
     t.pressed = true;
-    if (hal_touch_apply(t)) launcherConsolePrintf("OK tap %u %u\n", t.x, t.y);
-    else launcherConsolePrintln("OK tap woke the screen");
+    if (hal_touch_apply(t)) {
+        injectedPoint = t;
+        injectedAt = launcherMillis();
+        injectedTouch = true;
+        launcherConsolePrintf("OK tap %u %u\n", t.x, t.y);
+    } else {
+        launcherConsolePrintln("OK tap woke the screen");
+    }
 }
 #endif
 

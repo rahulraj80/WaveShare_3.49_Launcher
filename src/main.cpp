@@ -81,6 +81,16 @@ void launcherInputLockInit();
 void launcherInputLock();
 void launcherInputUnlock();
 
+// A press or tap injected by the serial console (nav/tap). The per-poll reset
+// below would wipe it before a slow screen (e.g. the boot screen redrawing a
+// full frame) gets to read it, so it is raised again after each reset until a
+// reader clears it, for at most 300 ms: hold-detecting readers then see a short
+// press, never a long one.
+volatile bool *injectedPress = nullptr;
+bool injectedTouch = false;
+LTouchPoint injectedPoint;
+unsigned long injectedAt = 0;
+
 void __attribute__((weak)) taskInputHandler(void *parameter) {
     auto timer = launcherMillis();
 #ifdef E_PAPER_DISPLAY
@@ -93,6 +103,11 @@ void __attribute__((weak)) taskInputHandler(void *parameter) {
             // half-written KeyStroke. It replaces the old vTaskSuspend() scheme, which could
             // freeze this task inside the allocator and deadlock loopTask - see mykeyboard.h.
             launcherInputLock();
+            const bool injectionLive = launcherMillis() - injectedAt < 300;
+            const bool keepPress = injectedPress && *injectedPress && injectionLive;
+            const bool keepTouch = injectedTouch && touchPoint.pressed && injectionLive;
+            if (!keepPress) injectedPress = nullptr;
+            injectedTouch = keepTouch;
 #ifdef E_PAPER_DISPLAY
             // Keep button flags the UI has not consumed yet instead of wiping them every
             // cycle, so a tap landing while loopTask is blocked in a panel refresh is still
@@ -138,6 +153,9 @@ void __attribute__((weak)) taskInputHandler(void *parameter) {
                 raisedAt = launcherMillis();
             }
 #endif
+            if (keepPress) *injectedPress = true;
+            if (keepTouch) touchPoint = injectedPoint;
+            if (keepPress || keepTouch) AnyKeyPress = true;
             launcherInputUnlock();
             timer = launcherMillis();
         }
