@@ -298,7 +298,15 @@ bool launcherBootCurrentApp() {
     if (!bootToApp) return false;
     std::vector<LauncherAppMetadata> apps = launcherListInstalledApps();
     if (apps.empty()) return false;
-    return true;
+    // The caller soft-resets and lets otadata pick the app. If otadata names no
+    // installed app (cleared by a removal, or a table with a gap in its OTA
+    // subtypes) the bootloader falls back to the Launcher and this loops, so
+    // pick one explicitly instead.
+    const esp_partition_t *boot = esp_ota_get_boot_partition();
+    for (const LauncherAppMetadata &app : apps) {
+        if (boot && boot->subtype != ESP_PARTITION_SUBTYPE_APP_TEST && app.label == boot->label) return true;
+    }
+    return launcherBootAppByLabel(apps[0].label.c_str());
 }
 bool launcherBootInstalledAppOrShowMenu() {
     if (!bootToApp) return false;
