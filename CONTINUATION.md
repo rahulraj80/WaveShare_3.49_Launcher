@@ -90,6 +90,18 @@ each piece of work and commit/push it with that work.
       3. Orientation menu offers 90/270 on ws349 (D4 says 0/180 only);
       4. serial_cli.py traceback when the port drops mid-command;
       5. stale Bruce image on SD: copy the `launcher` build, install, test hand-over both ways.
+- [x] Error fixes 2026-10-20: old DeskBar removed (PMan); OTA subtype gap fixed (removal keeps ota_N
+      contiguous, boot repairs gaps, auto-boot checks the bootloader can reach the selection; boot loop
+      gone); console replies no longer dropped; BOOT-key docs corrected + LAUNCHER_GPIO_KEYS removed;
+      serial_cli.py robust; Bruce `launcher` + `screenshot`, installed (brucew @0x790000) and verified:
+      renders 640x172, RF/NRF24/IR/RFID/LoRa/GPS/Ethernet/FM hidden, to_launcher works from Bruce.
+- [ ] DeskBar WiFi lost: the -launcher image ships a fresh LittleFS (data/), so installing replaced the
+      device's LittleFS incl. /wifi.json. Original LittleFS extracted from the full backup (0xE20000,
+      0x1E0000, has wifi.json/stations/playlist) to scratchpad ws349/deskbar_littlefs_backup.bin;
+      writing it to littlefs @0x1A0000 NEEDS OWNER APPROVAL (blocked as destructive).
+      Root cause to fix: an SD reinstall of the same app wasn't recognised as an update (no prompt,
+      new slot deskb1, data overwritten). Investigate sd_functions.cpp prevInstall/loadInstalledFromConfig.
+- [ ] Bruce's data partition takes all remaining flash (declared 11.4 MB > LAUNCHER_DEFAULT_SPIFFS_THRESHOLD).
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
