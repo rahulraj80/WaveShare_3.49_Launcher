@@ -16,6 +16,7 @@
 #include <esp_app_format.h>
 #include <esp_image_format.h>
 #include <esp_partition.h>
+#include <ff.h>
 #include <globals.h>
 #include <memory>
 SPIClass sdcardSPI;
@@ -84,9 +85,22 @@ bool setupSdCard() {
 ** Function name: deleteFromSd
 ** Description:   delete file or folder
 ***************************************************************************************/
+// FatFs refuses to remove read-only entries, and Windows marks customised
+// folders read-only, so clear the bit first. The card is one of the FatFs
+// volumes ("0:", "1:"); its paths are the same as SDM's.
+static void clearReadOnly(const String &path) {
+    for (char drv = '0'; drv < '0' + FF_VOLUMES; ++drv) {
+        if (f_chmod((String(drv) + ":" + path).c_str(), 0, AM_RDO) == FR_OK) return;
+    }
+}
+
 bool deleteFromSd(const String &path) {
     File dir = SDM.open(path);
-    if (!dir.isDirectory()) { return SDM.remove(path.c_str()); }
+    clearReadOnly(path);
+    if (!dir.isDirectory()) {
+        dir.close();
+        return SDM.remove(path.c_str());
+    }
 
     dir.rewindDirectory();
     bool success = true;
@@ -97,6 +111,7 @@ bool deleteFromSd(const String &path) {
         if (isDir) {
             success &= deleteFromSd(fullPath);
         } else {
+            clearReadOnly(fullPath);
             success &= SDM.remove(fullPath.c_str());
         }
         yield(); // large folders can take long enough to trip the task watchdog
