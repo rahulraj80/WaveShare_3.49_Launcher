@@ -27,7 +27,7 @@ each piece of work and commit/push it with that work.
       Host tool: `python support_files/serial_cli.py COM11 status "tap 320 110" "nav next" screenshot -o x.png`.
       USB-CDC drops bytes when its TX buffer is full, so binary output must go through `consoleWriteAll()`.
       A tap on a dimmed screen only wakes it (same as a finger); send it twice.
-- [ ] Owner: BOOT long press (held to 5 s) did nothing; other buttons OK. Cause: `hal_buttons_poll_1` sends
+- [x] (fix flashed; owner confirmed a ~1 s hold selected, matching the diagnosis) Owner: BOOT long press (held to 5 s) did nothing; other buttons OK. Cause: `hal_buttons_poll_1` sends
       Select at 0.55-1.2 s but Esc above 1.2 s. Fix: with HAS_2_BUTTONS (PWR is Esc) any hold >= 0.55 s is
       Select. Only this board uses poll_1 with HAS_2_BUTTONS.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
