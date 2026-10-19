@@ -16,7 +16,12 @@ each piece of work and commit/push it with that work.
 - [x] Full flash backup done: `C:\Users\rahul\OpenCode\backups\deskbar-v2.6.1-full-20261019.bin`
       (+ .sha256). NOT in any repo (NVS secrets). Restore: esptool write_flash 0 <file>.
 - [x] Submodules initialised.
-- [ ] Baseline build `m5stack-cardputer` (pio is at `~/.platformio/penv/Scripts/pio.exe`, not on bash PATH).
+- [ ] Build on `auto` (see "Build workflow" below): clone `ws349-port` to `~/scripts/WaveShare_3.49_Launcher`,
+      build `waveshare-esp32-s3-touch-lcd-349`. Board env is committed but NOT yet compiled.
+      Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
+      Backlight PWM is 5 kHz (HAL) vs 50 kHz in DeskBar: watch for flicker/whine.
+- Local build attempt on windows-box was a mistake (owner: no local compiles). It was stopped;
+  it left a 5.9 GB `.pio/` cache here. Ask the owner before deleting it.
 - [x] Add `TOUCH_CTRL_AXS15231B` (committed; not yet compiled) to `src/hal/inputs/touch.cpp` (extends the AXS5106L driver; same report decode,
       different read: write `B5 AB A5 5A 00 00 00 08 00 00 00` to 0x3B on Wire1 17/18, read 8 bytes).
 - [x] Scaffold `boards/waveshare-esp32-s3-touch-lcd-349/` (committed, NOT yet compiled) (BOOT via `hal_buttons_poll_1`, PWR=Esc / 2 s off,
@@ -31,6 +36,17 @@ each piece of work and commit/push it with that work.
    build, board folder scaffold, dummy-TFT serial boot, SYS_EN latch test.
 2. BSP skeleton: `library.json`, `ws349_board`, `ws349_expander`, liveness example.
 3. Bruce port (`notes/ports/bruce.md`).
+
+## Build workflow (owner rule: never compile on windows-box)
+1. Edit on windows-box, commit, push the branch to GitHub.
+2. `ssh auto` (autobots, Linux ARM; NOT `sup`). Repos live under `~/scripts/<repo>`;
+   `git pull` there (origin must be SSH: `git@github.com:rahulraj80/<repo>.git`).
+3. Build with the absolute path `~/.local/bin/pio run -d ~/scripts/<repo> -e <env>`.
+   Do NOT edit PATH on the server. `sed` is `/usr/bin/sed` there.
+4. `scp auto:~/scripts/<repo>/.pio/build/<env>/{bootloader,partitions,firmware}.bin` back,
+   flash COM11 from windows-box with esptool (0x0 / 0x8000 / 0x10000, 460800 baud).
+5. Never force-push. Single-token commit subjects or a remote script avoid quoting traps.
+Source: `opencode_knowledge/wiki/projects/tunebar/research/remote-build-and-flash-loop-on-auto.md`.
 
 ## Rules in force
 - **NO `Co-Authored-By` or any AI attribution in commits/PRs (mandatory).**
