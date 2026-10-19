@@ -1164,7 +1164,7 @@ void defaultValues() {
 #else
     dimmerSet = 20;
 #endif
-    bright = 100;
+    bright = DEFAULT_BRIGHT;
     onlyBins = true;
     bootToApp = true;
     bootTimer = 4;

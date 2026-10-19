@@ -151,7 +151,7 @@ unsigned long previousMillis;
 bool isSleeping;
 bool isScreenOff;
 bool dev_mode = false;
-int bright = 100;
+int bright = DEFAULT_BRIGHT;
 bool dimmer = false;
 int prog_handler; // 0 - Flash, 1 - SPIFFS
 int currentIndex;

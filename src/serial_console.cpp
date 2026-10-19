@@ -228,11 +228,12 @@ static void handleStatusCommand() {
 #endif
 }
 
-// Not saved: the next boot restores the brightness from the settings.
+// Saved like the Brightness menu's Select: config.conf on SD and NVS.
 static void handleBrightnessCommand(const String &arg) {
     int value = constrain(arg.toInt(), 0, 100);
-    _setBrightness(static_cast<uint8_t>(value));
-    launcherConsolePrintf("OK bl %d\n", value);
+    setBrightness(value);
+    saveConfigs();
+    launcherConsolePrintf("OK bl %d (saved)\n", value);
 }
 
 #if defined(HAS_TOUCH)

@@ -17,6 +17,12 @@
     #define ROTATION 3
 #endif
 
+// Brightness (0-100) used until the user saves one: first boot after a flash,
+// or a reset to defaults.
+#ifndef DEFAULT_BRIGHT
+    #define DEFAULT_BRIGHT 100
+#endif
+
 // Mounting-family offset, added to ROTATION and to every rotation the settings
 // menu offers. Arduino_GFX has eight rotations: 0-3 are the four 90 degree
 // steps based at MADCTL=0, and 4-7 the same four steps based at MADCTL=MX --
