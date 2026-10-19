@@ -385,6 +385,16 @@ bool launcherBootAppByLabel(const char *label) {
     const LauncherPartitionEntry *entry = launcherPartitionFindByLabel(table, label);
     if (!entry || !entry->isOtaApp()) return reportAppNotFound();
 
+    // The bootloader maps its OTA selection to ota_N by index, so a table with a
+    // gap in its OTA subtypes (left by an older removal) can't boot this app.
+    if (launcherPartitionOtaIndex(entry->subtype) >= launcherPartitionCountOtaApps(table)) {
+        normalizeOtaSubtypes(table);
+        if (!launcherPartitionWriteGeneratedTable(table, &error)) {
+            return reportStepFailed(error, "Table write failed");
+        }
+        entry = launcherPartitionFindByLabel(table, label);
+    }
+
     if (!launcherPartitionSetOtaBoot(table, entry->subtype, &error)) {
         return reportStepFailed(error, "Boot set failed");
     }

@@ -46,7 +46,11 @@ def in_launcher(port):
     except serial.SerialException:
         return False
     try:
-        return b"Launcher" in ask(s, "version")
+        reply = ask(s, "version")
+        # Still on the boot screen: its countdown would boot the app, so enter the menu.
+        if BOOT_PROMPT in reply:
+            ask(s, "nav sel")
+        return b"Launcher" in reply
     finally:
         s.close()
 

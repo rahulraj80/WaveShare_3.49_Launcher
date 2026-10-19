@@ -845,7 +845,16 @@ String launcherSizeLabel(uint32_t value) {
 bool launcherPartitionRemoveEntryByOffset(LauncherPartitionTable &table, uint32_t offset) {
     for (auto it = table.entries.begin(); it != table.entries.end(); ++it) {
         if (it->offset == offset) {
+            const bool wasOtaApp = it->isOtaApp();
+            const uint8_t removedSubtype = it->subtype;
             table.entries.erase(it);
+            // The bootloader maps its OTA selection to ota_N by index, so the
+            // subtypes must stay contiguous from ota_0: close the gap.
+            if (wasOtaApp) {
+                for (LauncherPartitionEntry &entry : table.entries) {
+                    if (entry.isOtaApp() && entry.subtype > removedSubtype) entry.subtype--;
+                }
+            }
             return true;
         }
     }
