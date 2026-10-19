@@ -110,6 +110,7 @@ Touchscreen drivers selected by one `TOUCH_CTRL_*` build flag:
 | `TOUCH_CTRL_GT9895` | GT9895 | I2C | Digitizer grid is larger than the panel and the chip doesn't report native resolution over I2C — the board must supply it via `DeviceTouch.raw_width`/`raw_height` (a fixed vendor/panel constant, e.g. 1060x2400). |
 | `TOUCH_CTRL_HI8561` | HI8561 | I2C | Already reports in panel coordinates, no scaling needed. |
 | `TOUCH_CTRL_AXS5106L` | AXS5106L | I2C (fixed 0x63) | Self-contained driver in `touch.cpp` (SensorLib has none). Reports raw panel-native (portrait) coordinates, so the host-side `SwapXY`/`MirrorX`/`MirrorY` path applies, same as `TOUCH_CTRL_FT6X36`. INT is only a hint — the driver still polls at ~60Hz because some modules leave it high. Boards sharing the touch RST line with the LCD must leave `DeviceTouch.pin_rst` at -1 and init touch from `_post_setup_gpio()`. |
+| `TOUCH_CTRL_AXS15231B` | AXS15231B (touch half) | I2C (fixed 0x3B) | Shares the `TOUCH_CTRL_AXS5106L` driver in `touch.cpp`; the report is requested with an 11-byte read command instead of a register read. Raw coordinates, host-side `SwapXY`/`MirrorX`/`MirrorY`. No RST/INT GPIO on waveshare-esp32-s3-touch-lcd-349 (INT is behind its TCA9554), so it is polled at ~60Hz; put it on its own bus via `DeviceTouch.i2c_bus`. |
 
 API:
 
@@ -117,7 +118,7 @@ API:
   `_setup_gpio()` (or `_post_setup_gpio()` if the panel/bus needs to come up
   first).
 - `hal_touch_read(cfg, LTouchPoint &out)` — call every `InputHandler()`
-  cycle. XPT2046/FT6X36/AXS5106L return a raw point and the HAL applies
+  cycle. XPT2046/FT6X36/AXS5106L/AXS15231B return a raw point and the HAL applies
   `cfg.SwapXY`/`MirrorX`/`MirrorY` on the host side; GT911/CST8xx/GT9895/
   HI8561 hand rotation to the driver itself
   (`setSwapXY()`/`setMirrorXY()`). Either way, `MirrorX`/`MirrorY`/`SwapXY`

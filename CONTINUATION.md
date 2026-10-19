@@ -17,7 +17,7 @@ each piece of work and commit/push it with that work.
       (+ .sha256). NOT in any repo (NVS secrets). Restore: esptool write_flash 0 <file>.
 - [x] Submodules initialised.
 - [ ] Baseline build `m5stack-cardputer` (pio is at `~/.platformio/penv/Scripts/pio.exe`, not on bash PATH).
-- [ ] Add `TOUCH_CTRL_AXS15231B` to `src/hal/inputs/touch.cpp` (extends the AXS5106L driver; same report decode,
+- [x] Add `TOUCH_CTRL_AXS15231B` (committed; not yet compiled) to `src/hal/inputs/touch.cpp` (extends the AXS5106L driver; same report decode,
       different read: write `B5 AB A5 5A 00 00 00 08 00 00 00` to 0x3B on Wire1 17/18, read 8 bytes).
 - [ ] Scaffold `boards/waveshare-esp32-s3-touch-lcd-349/` (BOOT via `hal_buttons_poll_1`, PWR=Esc / 2 s off,
       TCA9554 helper modelled on `boards/elecrow-esp32s3-5in/interface.cpp:34-98`).
@@ -33,6 +33,7 @@ each piece of work and commit/push it with that work.
 3. Bruce port (`notes/ports/bruce.md`).
 
 ## Rules in force
+- **NO `Co-Authored-By` or any AI attribution in commits/PRs (mandatory).**
 - Fixes go to our forks only (`rahulraj80/*`), never upstream.
 - Commit often; push the working branch so a local crash loses nothing.
 - Update this file before starting anything.
