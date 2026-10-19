@@ -24,6 +24,9 @@
 #include "soc/periph_defs.h"
 #include "soc/rtc_cntl_reg.h"
 #include "soc/usb_wrap_struct.h"
+#if CONFIG_IDF_TARGET_ESP32S3
+#include "hal/usb_serial_jtag_ll.h"
+#endif
 #endif
 
 bool MassStorage::shouldStop = false;
@@ -171,6 +174,11 @@ void restoreUsbSerial() {
     LP_SYS.usb_ctrl.sw_hw_usb_phy_sel = 1;
     LP_SYS.usb_ctrl.sw_usb_phy_sel = 0; // USB_SERIAL_JTAG -> FSLS PHY0 (Tab5 USB-C)
     usb_serial_jtag_ll_phy_enable_pad(true);
+    vTaskDelay(pdMS_TO_TICKS(50));
+#elif CONFIG_IDF_TARGET_ESP32S3
+    // usb_new_phy() mapped the internal PHY to the OTG wrap and usb_del_phy()
+    // leaves it there, so the USB-Serial/JTAG console never re-enumerates.
+    usb_serial_jtag_ll_phy_enable_external(false);
     vTaskDelay(pdMS_TO_TICKS(50));
 #endif
 #if ARDUINO_USB_CDC_ON_BOOT
