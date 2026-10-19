@@ -21,9 +21,12 @@ each piece of work and commit/push it with that work.
       boot_app0 0xE000, app 0x10000). Boot log: TCA9554 config 0x9D, SYS_EN latched, SD mounted,
       touch probe OK, boot screen reached, serial console answers `help`.
 - [x] Owner: screen is visible.
-- [ ] DeskBar-style CLI in `src/serial_console.cpp`: `ping`, `status`, `bl <0-100>`, `tap [x y]` (HAS_TOUCH),
-      `screenshot` (USE_CANVAS + Arduino_GFX, BMP framed `===BEGIN_BMP:n===`/`===END_BMP===`), plus host tool
-      `support_files/serial_cli.py`. Then build on auto and reflash.
+- [x] DeskBar-style CLI in `src/serial_console.cpp` (+1.7 KB): `ping`, `status`, `bl <0-100>`, `tap [x y]`
+      (HAS_TOUCH), `screenshot` (USE_CANVAS + Arduino_GFX). Verified on device 2026-10-19: screenshot of the
+      main menu, tap selects a tile, `nav prev` moves the highlight, status shows batt 94% / 4053 mV.
+      Host tool: `python support_files/serial_cli.py COM11 status "tap 320 110" "nav next" screenshot -o x.png`.
+      USB-CDC drops bytes when its TX buffer is full, so binary output must go through `consoleWriteAll()`.
+      A tap on a dimmed screen only wakes it (same as a finger); send it twice.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.

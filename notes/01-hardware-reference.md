@@ -194,3 +194,7 @@ practical minimum for text.** This drives the scaling rules in
   remote-control pattern worth copying. Read-only commands that don't change the
   screen: `ping`, `help`, `status`, `batt`, `telemetry`. Open COM11 with DTR/RTS
   cleared before `open()` so the board doesn't reset.
+
+- **Launcher CLI (our fork)**: `support_files/serial_cli.py COM11 <cmd>...`. Commands: `ping`, `status`,
+  `bl <0-100>`, `tap [x y]`, `nav <next|prev|sel|esc>`, `screenshot -o file.png` (landscape PNG of the
+  framebuffer). Native USB-CDC drops bytes if the TX buffer is full: loop on `Serial.write()` for bulk data.
