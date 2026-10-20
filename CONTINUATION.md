@@ -126,6 +126,12 @@ each piece of work and commit/push it with that work.
       PNG build (2,908,700 B, -889,380) is in slot deskb1. After shots: LAN now blocked for this session
       (WinError 10013), serial shot loses ~1 KB/frame -> fixing DeskBar screenshot pacing (flush per row)
       on main, cherry-pick to exp/png-images, rebuild both, capture after_* over serial.
+      Result: still lossy. Root cause is Arduino-ESP32 3.x HWCDC: its "connected" flag flips under
+      DeskBar's load and it then silently discards queued TX. Tried (all on DeskBar main + exp, commits
+      e8081e3..7e3ac13): write only availableForWrite(), 2 s TxTimeout, `screenrows <y0> <n>` (per-row
+      FNV-1a checksum, retry). Best: ~60% rows good per pass, and the transfer stalls afterwards.
+      Not solved. Waiting on the owner: allow LAN access (the HTTP /screenshot.bmp path is clean) or keep
+      digging (e.g. bypass HWCDC with the IDF usb_serial_jtag driver).
       DeskBar debloat done on main so far: codecs -278,908 B, font subsets -132,160 B, gzip web -36,464 B,
       LittleFS data 552 KB -> ~21 KB.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
