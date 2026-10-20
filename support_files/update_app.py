@@ -56,7 +56,20 @@ def main():
     time.sleep(0.5)
     cmd = [sys.executable, "-m", "esptool", "--chip", "esp32s3", "-p", port, "-b", "460800",
            "write-flash", f"0x{offset:X}", str(image)]
-    return subprocess.call(cmd)
+    rc = subprocess.call(cmd)
+    if rc != 0:
+        return rc
+
+    # esptool's reset boots whichever app was selected last; start this one.
+    time.sleep(6)
+    if to_launcher.main_for(port) != 0:
+        return 1
+    s = to_launcher.open_port(port)
+    try:
+        print(to_launcher.ask(s, f"boot {label}").decode("utf-8", "replace").strip())
+    finally:
+        s.close()
+    return 0
 
 
 if __name__ == "__main__":

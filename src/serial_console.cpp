@@ -1037,6 +1037,7 @@ static void printWhoami() { launcherConsolePrintln(device_name.c_str()); }
 static void printHelp() {
     launcherConsolePrintln("Commands:");
     launcherConsolePrintln("  nav <NextPress|PrevPress|SelPress|EscPress>");
+    launcherConsolePrintln("  boot <label>   (installed app, see `partitions`)");
     launcherConsolePrintln("  ping");
     launcherConsolePrintln("  status");
     launcherConsolePrintln("  bl <0-100>");
@@ -1094,6 +1095,10 @@ static void handleSerialCommand(const String &line) {
         handleNavCommand(tokens[1]);
     } else if (cmd.equalsIgnoreCase("reboot")) {
         handleRebootCommand();
+    } else if (cmd.equalsIgnoreCase("boot") && tokens.size() >= 2) {
+        launcherConsolePrintf("OK booting %s\n", tokens[1].c_str());
+        launcherConsoleFlush();
+        if (!launcherBootAppByLabel(tokens[1].c_str())) launcherConsolePrintln("ERR no such app");
     } else if (cmd.equalsIgnoreCase("ping")) {
         launcherConsolePrintln("PONG");
     } else if (cmd.equalsIgnoreCase("status")) {
