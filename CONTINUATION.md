@@ -105,6 +105,9 @@ each piece of work and commit/push it with that work.
       Old note: an SD reinstall of the same app wasn't recognised as an update (no prompt,
       new slot deskb1, data overwritten). Investigate sd_functions.cpp prevInstall/loadInstalledFromConfig.
 - [ ] Bruce's data partition takes all remaining flash (declared 11.4 MB > LAUNCHER_DEFAULT_SPIFFS_THRESHOLD).
+- [ ] NEXT: Meshtastic port (notes/ports/meshtastic.md), no LoRa for now. When its image is ready:
+      D8 rotation: PMan backup Bruce (app + data) to SD, remove Bruce, install Meshtastic.
+      Verify the backup/restore path once before relying on it.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.

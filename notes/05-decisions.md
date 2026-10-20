@@ -84,3 +84,11 @@ Not automatic. The Launcher's **USB** tile hands the SD card to the PC and cuts 
 from it. It switches back when (a) the USB cable is unplugged or the PC ejects the drive, or
 (b) any button press or tap on the device. After switching back the board must be COM11 again
 (fix the current exit bug).
+
+### D8. One rotating firmware slot (2026-10-20)
+- DeskBar stays installed permanently. Exactly one other firmware is installed at a time.
+- Rotating it out: in PMan, back up the app **and its data** to SD (`/bkp`), then remove it.
+- Bringing it back: install its image from SD and restore the saved data when the Launcher asks.
+- Order planned: Bruce (installed now) -> Meshtastic -> Marauder. Bruce stays installed until the
+  Meshtastic image is built and ready to install.
+- Updates to the installed firmware are app-only into its slot (`support_files/update_app.py`).
