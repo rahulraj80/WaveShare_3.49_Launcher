@@ -132,6 +132,9 @@ each piece of work and commit/push it with that work.
       FNV-1a checksum, retry). Best: ~60% rows good per pass, and the transfer stalls afterwards.
       Not solved. Waiting on the owner: allow LAN access (the HTTP /screenshot.bmp path is clean) or keep
       digging (e.g. bypass HWCDC with the IDF usb_serial_jtag driver).
+      UPDATE: LAN worked again later (the block was temporary). after_* captured over HTTP;
+      menu/utility/player pixel-identical, clock/weather differ only by live data/animation.
+      Waiting on owner: merge PNG branch? keep or revert the unfinished serial screenshot changes?
       DeskBar debloat done on main so far: codecs -278,908 B, font subsets -132,160 B, gzip web -36,464 B,
       LittleFS data 552 KB -> ~21 KB.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
