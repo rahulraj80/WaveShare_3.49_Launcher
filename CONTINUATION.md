@@ -123,6 +123,9 @@ each piece of work and commit/push it with that work.
       (LV_IMG_CF_RAW_ALPHA), LV_USE_PNG 1, LV_MEM_SIZE 2 MB (pool is in PSRAM), LV_IMG_CACHE_DEF_SIZE 24.
       Before = main e4694ab (app 3,798,080 B); screenshots via http://192.168.3.4/screenshot.bmp
       (DeskBar's serial screenshot loses ~170 B). Scratchpad capture_deskbar.py <prefix>.
+      PNG build (2,908,700 B, -889,380) is in slot deskb1. After shots: LAN now blocked for this session
+      (WinError 10013), serial shot loses ~1 KB/frame -> fixing DeskBar screenshot pacing (flush per row)
+      on main, cherry-pick to exp/png-images, rebuild both, capture after_* over serial.
       DeskBar debloat done on main so far: codecs -278,908 B, font subsets -132,160 B, gzip web -36,464 B,
       LittleFS data 552 KB -> ~21 KB.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
