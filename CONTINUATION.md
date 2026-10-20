@@ -138,7 +138,7 @@ each piece of work and commit/push it with that work.
       Launcher and booted directly; the old host tool zero-padded the gaps. Fix: the BMP is written straight to
       the USB-Serial/JTAG FIFO (HWCDC TX interrupt masked meanwhile); earlier attempts reverted.
       330,294/330,294 B, 0.9 s, 0 px differ from the HTTP shot. Device: deskb1 = PNG build with the fix.
-      Waiting on owner: merge exp/png-images into main?
+      Owner approved merge (2026-10-20): merging exp/png-images into main, rebuild main, flash deskb1.
       DeskBar debloat done on main so far: codecs -278,908 B, font subsets -132,160 B, gzip web -36,464 B,
       LittleFS data 552 KB -> ~21 KB.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
