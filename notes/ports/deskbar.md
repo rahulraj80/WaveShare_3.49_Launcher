@@ -23,7 +23,7 @@ DeskBar already runs natively on this board. This is about packaging, not portin
    `LAUNCHER_BUILD` flag that hides or blocks in-app OTA and points the user to
    the Launcher catalogue.
 3. CLI command `launcher`: 100 ms deep sleep, which the keyboot bootloader turns into a Launcher
-   start (done, TuneBar `launcher-build` cbec713). A menu item could call the same code.
+   start (done, DeskBar-AI `main` cbec713). A menu item could call the same code.
 4. **Catalogue:** DeskBar's `releases/firmware_catalog.json` entries can be
    republished as `-launcher.bin` assets and listed in our fork catalogue (D3).
 

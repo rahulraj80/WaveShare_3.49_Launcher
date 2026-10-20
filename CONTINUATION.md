@@ -6,7 +6,8 @@ each piece of work and commit/push it with that work.
 ## Current state (2026-10-19)
 - Planning is done. See `notes/README.md` (index), `notes/05-decisions.md`
   (owner rulings), `notes/ports/*.md` (per-firmware plans).
-- Branch: `ws349-port` in this repo (pushed to origin `rahulraj80/WaveShare_3.49_Launcher`).
+- Work on `main` in every fork (owner, 2026-10-20). The old `ws349-port` / `launcher-build` branches were
+  fast-forwarded into `main` and deleted.
 - BSP repo created: `C:\Users\rahul\OpenCode\WaveShare_3.49_BSP` (Apache-2.0, empty
   except LICENSE/README). Design: `notes/06-bsp-library-design.md`.
 
