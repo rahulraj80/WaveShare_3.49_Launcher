@@ -108,6 +108,26 @@ each piece of work and commit/push it with that work.
 - [ ] NOW (2026-10-20, owner "go ahead"): Bruce debloat in WaveShare_3.49_Bruce_firmware main.
       Step 1: baseline size; step 2: lib_ignore ESP8266Audio/SAM + 4mb IR set + DISABLE_INTERPRETER in the
       board .ini; step 3: compile-out switch for RF/IR/RFID/NRF24/GPS/Ethernet/LoRa; then update_app brucew.
+      [x] Step 1 baseline (855bf41): app 3,748,576 B.
+      [x] Step 2 (committed + pushed): board .ini adds DISABLE_INTERPRETER, env_4mb IR protocol set,
+          lib_ignore ESP8266Audio/ESP8266SAM (only used with HAS_NS4168_SPKR anyway). Built: 3,477,360 B (-271 KB).
+      [ ] Step 3 IN PROGRESS (committed + pushed, does NOT link yet): new macro DISABLE_ADDON_MODULES
+          (set in the board .ini). build_src_filter drops modules/{rf,NRF24,lora,fm,ir,rfid,gps,bjs_interpreter},
+          menu_items/{RF,NRF24,LoRa,FM,IR,RFID,Gps,Ethernet}Menu.cpp, serial_commands/{rf,ir,rfid}_commands.cpp.
+          modules/ethernet is KEPT (WifiMenu + wifi_commands use ARPScanner). Guards added in main_menu.h/.cpp,
+          cli.cpp, startup_app.cpp (GPS/PN532/SubGHz/Wardriving apps), sd_functions.cpp (.ir/.sub/.csv actions),
+          settings.cpp (setRFModuleMenu/setRFFreqMenu), main.cpp (initCC1101once), BLE_Suite.cpp (nrf24JamAttack
+          stub).
+          Remaining link errors (log ~/scripts/bruce_s3.log on auto): jamBLEAdvertisingChannels() and
+          stopBLEJammer() from BLE_Suite.cpp ~2532/2543 (jamAndConnect / executeAttackWithTargetScan): guard those
+          NRF24 calls the same way, rebuild, repeat until it links.
+          Build cmd on auto: cd ~/scripts/WaveShare_3.49_Bruce_firmware && git fetch -q && git reset -q --hard
+          origin/main && PATH="$HOME/.local/bin:$PATH" PLATFORMIO_CORE_DIR="$HOME/scripts/WaveShare_3.49_Bruce_firmware/.pio/core"
+          ~/.local/bin/pio run -e waveshare-esp32-s3-touch-lcd-349  (full build ~7-8 min).
+      [ ] Then: scp firmware.bin back, `python support_files/update_app.py COM11 brucew firmware.bin`, check
+          menus (WiFi/BLE/Files/Clock/Others/Config only), CLI, screenshot, `launcher` hand-over; report sizes.
+      Device now: Launcher; deskb1 = DeskBar main f08fd98 (PNG images + USB screenshot fix); brucew = old Bruce
+      (Oct 19 build).
 - [ ] NEXT: Meshtastic port (notes/ports/meshtastic.md), no LoRa for now. When its image is ready:
       D8 rotation: PMan backup Bruce (app + data) to SD, remove Bruce, install Meshtastic.
       Verify the backup/restore path once before relying on it.
