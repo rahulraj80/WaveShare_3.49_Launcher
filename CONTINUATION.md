@@ -118,7 +118,7 @@ each piece of work and commit/push it with that work.
       Meshtastic port: Tier A excludes + ringtones off, KEEP web server.
       Marauder port: Tier A + text splash + Bluetooth off.
       Disk/repo: delete DeskBar local build leftovers; remove old images and tracked build outputs.
-- [ ] EXPERIMENT (owner asked: branch, measure, before/after screenshots): DeskBar branch `exp/png-images`.
+- [x] EXPERIMENT (owner asked: branch, measure, before/after screenshots): DeskBar branch `exp/png-images`.
       Images (except Nixie digits + tiny sprites) re-encoded losslessly from the current arrays as PNG
       (LV_IMG_CF_RAW_ALPHA), LV_USE_PNG 1, LV_MEM_SIZE 2 MB (pool is in PSRAM), LV_IMG_CACHE_DEF_SIZE 24.
       Before = main e4694ab (app 3,798,080 B); screenshots via http://192.168.3.4/screenshot.bmp
@@ -138,7 +138,8 @@ each piece of work and commit/push it with that work.
       Launcher and booted directly; the old host tool zero-padded the gaps. Fix: the BMP is written straight to
       the USB-Serial/JTAG FIFO (HWCDC TX interrupt masked meanwhile); earlier attempts reverted.
       330,294/330,294 B, 0.9 s, 0 px differ from the HTTP shot. Device: deskb1 = PNG build with the fix.
-      Owner approved merge (2026-10-20): merging exp/png-images into main, rebuild main, flash deskb1.
+      DONE: merged into DeskBar main (f08fd98), branch deleted, auto clone on main, deskb1 = main build
+      (app 2,910,608 B), USB screenshot verified. SD image deskbar-2.6.1-launcher.bin rebuilt on auto (not copied to SD).
       DeskBar debloat done on main so far: codecs -278,908 B, font subsets -132,160 B, gzip web -36,464 B,
       LittleFS data 552 KB -> ~21 KB.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
