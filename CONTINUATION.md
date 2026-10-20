@@ -108,6 +108,16 @@ each piece of work and commit/push it with that work.
 - [ ] NEXT: Meshtastic port (notes/ports/meshtastic.md), no LoRa for now. When its image is ready:
       D8 rotation: PMan backup Bruce (app + data) to SD, remove Bruce, install Meshtastic.
       Verify the backup/restore path once before relying on it.
+- [ ] DEBLOAT (owner-approved 2026-10-20):
+      Launcher: drop unused `#include <iostream>` (keep mDNS).
+      DeskBar (all A+B): delete 3 unused mp3; move ui/images_backup out of src; delete unused images/fonts;
+        gzip web UI; Montserrat 48/32 digit subsets; drop Opus/Vorbis/FLAC decoders; shrink in-use images.
+        Sounds on/off.mp3: owner asked about generating them; awaiting choice (synth vs re-encode).
+      Bruce (all): lib_ignore ESP8266Audio/SAM, reduced IR set, DISABLE_INTERPRETER, compile out
+        RF/IR/RFID/NRF24/GPS/Ethernet/LoRa (new switch). Boot shark is a 255-byte XBM: nothing to save.
+      Meshtastic port: Tier A excludes + ringtones off, KEEP web server.
+      Marauder port: Tier A + text splash + Bluetooth off.
+      Disk/repo: delete DeskBar local build leftovers; remove old images and tracked build outputs.
 - [ ] Owner visual check (remaining): picture, orientation (ROTATION 1 vs 3), colours/inversion, backlight, touch
       position, BOOT/PWR buttons, battery unplug test.
       Touch mirror/swap and ROTATION 1 vs 3 are guesses until tested on hardware.
