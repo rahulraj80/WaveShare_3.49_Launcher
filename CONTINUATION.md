@@ -105,6 +105,9 @@ each piece of work and commit/push it with that work.
       Old note: an SD reinstall of the same app wasn't recognised as an update (no prompt,
       new slot deskb1, data overwritten). Investigate sd_functions.cpp prevInstall/loadInstalledFromConfig.
 - [ ] Bruce's data partition takes all remaining flash (declared 11.4 MB > LAUNCHER_DEFAULT_SPIFFS_THRESHOLD).
+- [ ] NOW (2026-10-20, owner "go ahead"): Bruce debloat in WaveShare_3.49_Bruce_firmware main.
+      Step 1: baseline size; step 2: lib_ignore ESP8266Audio/SAM + 4mb IR set + DISABLE_INTERPRETER in the
+      board .ini; step 3: compile-out switch for RF/IR/RFID/NRF24/GPS/Ethernet/LoRa; then update_app brucew.
 - [ ] NEXT: Meshtastic port (notes/ports/meshtastic.md), no LoRa for now. When its image is ready:
       D8 rotation: PMan backup Bruce (app + data) to SD, remove Bruce, install Meshtastic.
       Verify the backup/restore path once before relying on it.
