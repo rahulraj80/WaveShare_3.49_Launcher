@@ -105,29 +105,21 @@ each piece of work and commit/push it with that work.
       Old note: an SD reinstall of the same app wasn't recognised as an update (no prompt,
       new slot deskb1, data overwritten). Investigate sd_functions.cpp prevInstall/loadInstalledFromConfig.
 - [ ] Bruce's data partition takes all remaining flash (declared 11.4 MB > LAUNCHER_DEFAULT_SPIFFS_THRESHOLD).
-- [ ] NOW (2026-10-20, owner "go ahead"): Bruce debloat in WaveShare_3.49_Bruce_firmware main.
-      Step 1: baseline size; step 2: lib_ignore ESP8266Audio/SAM + 4mb IR set + DISABLE_INTERPRETER in the
-      board .ini; step 3: compile-out switch for RF/IR/RFID/NRF24/GPS/Ethernet/LoRa; then update_app brucew.
-      [x] Step 1 baseline (855bf41): app 3,748,576 B.
-      [x] Step 2 (committed + pushed): board .ini adds DISABLE_INTERPRETER, env_4mb IR protocol set,
-          lib_ignore ESP8266Audio/ESP8266SAM (only used with HAS_NS4168_SPKR anyway). Built: 3,477,360 B (-271 KB).
-      [ ] Step 3 IN PROGRESS (committed + pushed, does NOT link yet): new macro DISABLE_ADDON_MODULES
-          (set in the board .ini). build_src_filter drops modules/{rf,NRF24,lora,fm,ir,rfid,gps,bjs_interpreter},
-          menu_items/{RF,NRF24,LoRa,FM,IR,RFID,Gps,Ethernet}Menu.cpp, serial_commands/{rf,ir,rfid}_commands.cpp.
-          modules/ethernet is KEPT (WifiMenu + wifi_commands use ARPScanner). Guards added in main_menu.h/.cpp,
-          cli.cpp, startup_app.cpp (GPS/PN532/SubGHz/Wardriving apps), sd_functions.cpp (.ir/.sub/.csv actions),
-          settings.cpp (setRFModuleMenu/setRFFreqMenu), main.cpp (initCC1101once), BLE_Suite.cpp (nrf24JamAttack
-          stub).
-          Remaining link errors (log ~/scripts/bruce_s3.log on auto): jamBLEAdvertisingChannels() and
-          stopBLEJammer() from BLE_Suite.cpp ~2532/2543 (jamAndConnect / executeAttackWithTargetScan): guard those
-          NRF24 calls the same way, rebuild, repeat until it links.
-          Build cmd on auto: cd ~/scripts/WaveShare_3.49_Bruce_firmware && git fetch -q && git reset -q --hard
-          origin/main && PATH="$HOME/.local/bin:$PATH" PLATFORMIO_CORE_DIR="$HOME/scripts/WaveShare_3.49_Bruce_firmware/.pio/core"
-          ~/.local/bin/pio run -e waveshare-esp32-s3-touch-lcd-349  (full build ~7-8 min).
-      [ ] Then: scp firmware.bin back, `python support_files/update_app.py COM11 brucew firmware.bin`, check
-          menus (WiFi/BLE/Files/Clock/Others/Config only), CLI, screenshot, `launcher` hand-over; report sizes.
-      Device now: Launcher; deskb1 = DeskBar main f08fd98 (PNG images + USB screenshot fix); brucew = old Bruce
-      (Oct 19 build).
+- [x] Bruce debloat DONE 2026-10-20 in WaveShare_3.49_Bruce_firmware main.
+      Step 1 baseline (855bf41): app 3,748,576 B.
+      Step 2 (3218cb5): DISABLE_INTERPRETER, 4mb IR protocol set, lib_ignore ESP8266Audio/ESP8266SAM ->
+          3,477,360 B (-271 KB).
+      Step 3 (5bee721 + 81ea59a): DISABLE_ADDON_MODULES drops modules/{rf,NRF24,lora,fm,ir,rfid,gps,
+          bjs_interpreter}, menu_items/{RF,NRF24,LoRa,FM,IR,RFID,Gps,Ethernet}Menu.cpp and
+          serial_commands/{rf,ir,rfid}_commands.cpp; modules/ethernet KEPT (WifiMenu/ARPScanner).
+          Guards in main_menu, cli, startup_app, sd_functions, settings, main, BLE_Suite (nrf24JamAttack and
+          jamAndConnect stubs) and the `help` text (no IR/RF lines). Links now; app 2,818,585 B
+          (-928,691 B = -24.8% vs baseline).
+      Installed app-only via update_app.py into `brucew` (data kept) and verified: menus
+          WiFi/BLE/Files/Clock/Others/Config only, 640x172 render, screenshot 330,294 B, `launcher` ->
+          Launcher and `boot brucew` -> Bruce.
+      Device now: Launcher running; deskb1 = DeskBar main f08fd98 (PNG images + USB screenshot fix);
+      brucew = Bruce main 81ea59a (debloated).
 - [ ] NEXT: Meshtastic port (notes/ports/meshtastic.md), no LoRa for now. When its image is ready:
       D8 rotation: PMan backup Bruce (app + data) to SD, remove Bruce, install Meshtastic.
       Verify the backup/restore path once before relying on it.
