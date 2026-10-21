@@ -39,3 +39,12 @@ MUI (device-ui/LVGL) has no 640×172 view. Skip MUI.
    Point them at I2C0 47/48.
 7. Battery: `BATTERY_PIN 4`, `ADC_MULTIPLIER 3`.
 8. "Reboot to Launcher" in the system menu.
+
+## Boot loop fixed and verified (2026-10-21)
+- Symptom: reset every 1-2 s with `reset_reason=intWatchdog` right after `TransmitHistory`; no display/touch logs.
+- Cause: ESP32 defaults `HAS_RADIO=1` (`src/platform/esp32/architecture.h`). `main.cpp` therefore ran `SPI.begin(SCK=5, MISO=19, MOSI=27, CS=18)`, claiming FSPI/SPI2 (the AXS15231B QSPI host) and repurposing GPIO19 (USB D-) and GPIO18 (touch SCL). The QSPI `spi_bus_initialize` then aborted and USB died, so later output was lost.
+- Fix: `#define HAS_RADIO 0` in `variant.h`; guard the ESP32 LoRa SPI init and `initLoRa()` with `#if HAS_RADIO` in `src/main.cpp`. No other functional change.
+- Verified on hardware: boot reaches `Do TFT init`, panel init, frame alloc, flush task, `Applied screen brightness: 153`, `TouchScreen initialized`, `Display on`; 90 s capture with no reset; `NO_RADIO` critical error 3 is expected.
+- Framebuffer screenshot (320x86 nearest-neighbour 3x): `C:\Users\rahul\AppData\Local\Temp\opencode\meshtastic_frame_3x.png` - green Meshtastic boot splash, `meshtastic.org` wordmark, UNSET region, clock. Colours correct after undoing the dump's extra byte swap.
+- Final image: `meshta-final.bin` 2,316,896 B, SHA256 B9CF6D4AD2CB4043999541FD6DBFBCDD927C3A7BC7CF157C9B40538E81AE35F1, flashed to `meshta` @0xC60000.
+
